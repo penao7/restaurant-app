@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { ListItem, Card } from 'react-native-elements';
+import { DISHES } from '../shared/dishes';
 
 const RenderDish = ({dish}) => {
   return (
@@ -18,9 +19,13 @@ const RenderDish = ({dish}) => {
   );
 };
 
-const Dishdetail = ({dish}) => {
+const Dishdetail = ({route}) => {
+
+  const [dishes] = useState(DISHES);
+  const dishId = route.params.dishId
+
   return (
-      <RenderDish dish={dish}/>
+      <RenderDish dish={dishes[+dishId]}/>
   );
 };
 
