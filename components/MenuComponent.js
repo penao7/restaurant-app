@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
-import { DISHES } from '../shared/dishes';
+import { DISHES } from './shared/dishes';
 
 const Menu = ({navigation}) => {
 

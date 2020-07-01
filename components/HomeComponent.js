@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import { Card } from 'react-native-elements';
-import { DISHES } from '../shared/dishes';
-import { PROMOTIONS } from '../shared/promotions';
-import { LEADERS } from '../shared/leaders';
+import { DISHES } from './shared/dishes';
+import { PROMOTIONS } from './shared/promotions';
+import { LEADERS } from './shared/leaders';
 
 const RenderItem = ({item}) => {
   return (

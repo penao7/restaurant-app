@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, Text } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
-import { LEADERS } from '../shared/leaders';
+import { LEADERS } from './shared/leaders';
 
 const About = () => {
 
