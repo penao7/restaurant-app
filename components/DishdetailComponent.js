@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { Text, View, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
-import { DISHES } from '../shared/dishes';
-import { COMMENTS } from '../shared/comments';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+
+const mapStateToProps = state => {
+  return {
+    dishes: state.dishes,
+    comments: state.comments
+  };
+};
 
 const RenderDish = ({dish, favourite, onPress, onDelete}) => {
   return (
@@ -10,7 +17,7 @@ const RenderDish = ({dish, favourite, onPress, onDelete}) => {
     ?
       <Card
         featuredTitle={dish.name}
-        image={require('./images/uthappizza.png')}
+        image={{uri: baseUrl + dish.image}}
       >
         <Text style={{margin: 10}}>
           {dish.description}
@@ -33,7 +40,7 @@ const renderStars = (rating) => {
   let i = 0;
   let stars = []
   while (i < rating) {
-    stars.push(<Icon name="star" type="ion-icon" color="orange"/>
+    stars.push(<Icon key={i} name="star" type="ion-icon" color="orange"/>
     );
     i++
   };
@@ -70,13 +77,12 @@ const RenderComments = ({comments}) => {
 
 };
 
-const Dishdetail = ({route}) => {
+const Dishdetail = ({dishes, comments, route}) => {
 
   const [data, setData] = useState({
-    dishes: DISHES,
-    comments: COMMENTS,
     favourites: []
   });
+
   const dishId = route.params.dishId
 
   const markFavourite = (dishId) => {
@@ -90,14 +96,14 @@ const Dishdetail = ({route}) => {
   return (
     <ScrollView>
       <RenderDish 
-        dish={data.dishes[+dishId]}
+        dish={dishes.dishes[+dishId]}
         favourite={data.favourites.some(el => el === dishId)}
         onPress={() => markFavourite(dishId)}
         onDelete={() => removeFavourite(dishId)}
       />
-      <RenderComments comments={data.comments.filter(comment => comment.dishId === dishId)}/>    
+      <RenderComments comments={comments.comments.filter(comment => comment.dishId === dishId)}/>    
     </ScrollView>  
   );
 };
 
-export default Dishdetail
+export default connect(mapStateToProps)(Dishdetail);

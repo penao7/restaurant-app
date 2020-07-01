@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ScrollView, Text } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
-import { LEADERS } from './shared/leaders';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
 
-const About = () => {
+const mapStateToProps = state => {
+  return {
+    leaders: state.leaders
+  };
+};
 
-  const [leaders] = useState(LEADERS)
+const About = ({leaders}) => {
 
   const History = () => {
     return (
@@ -37,7 +42,7 @@ const About = () => {
               title={leader.name}
               subtitle={leader.description}
               hideChevron={true}
-              leftAvatar={{source: require('./images/alberto.png')}}
+              leftAvatar={{source: {uri: baseUrl + leader.image}}}
             />
               )
           }
@@ -48,9 +53,9 @@ const About = () => {
   return (
     <ScrollView>
       <History/>
-      <RenderLeaders leaders={leaders}/>
+      <RenderLeaders leaders={leaders.leaders}/>
     </ScrollView>
   );
 };
 
-export default About;
+export default connect(mapStateToProps)(About);

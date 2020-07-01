@@ -11,9 +11,9 @@ export const COMMENTS_FAILED = "COMMENTS_FAILED";
 
 // For Promotions
 
-export const PROMOS_LOADING = "PROMOTIONS_LOADING";
-export const ADD_PROMOS = "ADD_PROMOTIONS";
-export const PROMOS_FAILED = "PROMOTIONS_FAILED";
+export const PROMOS_LOADING = "PROMOS_LOADING";
+export const ADD_PROMOS = "ADD_PROMOS";
+export const PROMOS_FAILED = "PROMOS_FAILED";
 
 // For Leaders
 

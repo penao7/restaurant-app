@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Home from './HomeComponent';
 import Menu from './MenuComponent';
 import About from './AboutComponent';
@@ -8,90 +8,79 @@ import { Text, View, Platform, Image, StyleSheet, SafeAreaView } from 'react-nat
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { Icon } from 'react-native-elements';
+import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
+import { connect } from 'react-redux';
+import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const Main = () => {
+const mapStateToProps = state => {
+  return {
+    dishes: state.dishes,
+    comments: state.comments,
+    promotions: state.promotions,
+    leaders: state.leaders
+  };
+};
 
-  const HomeNavigator = () => {
-    return (
-    <View style={{ flex: 1, paddingTop: Platform.OS === "ios" ? 0 : Expo.Constants.statusBarHeight}}>
-        <Stack.Navigator initialRouteName="Home"
-        screenOptions={({navigation}) => ({
-            headerStyle: {
-              backgroundColor: "#512DA8"
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              color: "#fff"
-            },
-            headerLeft: () => (
-              <Icon
-                name="menu" 
-                size={24} 
-                color="white"
-                onPress={() => navigation.toggleDrawer()}
-              />
-            )
-          })
-        }
+const mapDispatchToProps = dispatch => ({
+  fetchDishes: () => dispatch(fetchDishes()),
+  fetchComments: () => dispatch(fetchComments()),
+  fetchPromos: () => dispatch(fetchPromos()),
+  fetchLeaders: () => dispatch(fetchLeaders())
+});
+
+const HomeNavigator = () => {
+  return (
+  <View style={{ flex: 1 }}>
+      <Stack.Navigator initialRouteName="Home"
+      screenOptions={({navigation}) => ({
+          headerStyle: {
+            backgroundColor: "#512DA8"
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            color: "#fff"
+          },
+          headerLeft: () => (
+            <Icon
+              name="menu" 
+              size={24} 
+              color="white"
+              onPress={() => navigation.toggleDrawer()}
+            />
+          )
+        })
+      }
+    >
+      <Stack.Screen
+        name="Home" 
+        component={Home} 
+    />
+    </Stack.Navigator>
+  </View>
+  )
+};
+
+const MenuNavigator = () => {
+  return (
+    <View style={{ flex: 1 }}>
+      <Stack.Navigator initialRouteName="Menu"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "#512DA8"
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            color: "#fff"
+          }
+        }}
       >
-        <Stack.Screen
-          name="Home" 
-          component={Home} 
-      />
-      </Stack.Navigator>
-    </View>
-    )
-  };
-
-  const MenuNavigator = () => {
-    return (
-      <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight}}>
-        <Stack.Navigator initialRouteName="Menu"
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: "#512DA8"
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              color: "#fff"
-            }
-          }}
-        >
-          <Stack.Screen 
-            name="Menu" 
-            component={Menu}
-            options={({navigation}) => ({
-              headerLeft: () => (
-                <Icon
-                  name="menu" 
-                  size={24} 
-                  color="white" 
-                  onPress={() => navigation.toggleDrawer()}
-                />
-            )})}
-          />
-          <Stack.Screen name="Dishdetail" component={Dishdetail}/>
-        </Stack.Navigator>
-      </View>
-    )
-  };
-
-  const ContactNavigator = () => {
-    return (
-    <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight}}>
-        <Stack.Navigator
-          initialRouteName="Contact"
-          screenOptions={({navigation}) => ({
-            headerStyle: {
-              backgroundColor: "#512DA8"
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              color: "#fff"
-            },
+        <Stack.Screen 
+          name="Menu" 
+          component={Menu}
+          options={({navigation}) => ({ 
             headerLeft: () => (
               <Icon
                 name="menu" 
@@ -99,20 +88,19 @@ const Main = () => {
                 color="white" 
                 onPress={() => navigation.toggleDrawer()}
               />
-            )
-          })
-        }
-      >
-        <Stack.Screen name="Contact" component={Contact}/>
+          )})}
+        />
+        <Stack.Screen name="Dishdetail" component={Dishdetail}/>
       </Stack.Navigator>
     </View>
-    )
-  };
+  )
+};
 
-  const AboutUsNavigator = () => {
-    return (
-    <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight}}>
-        <Stack.Navigator initialRouteName="AboutUs"
+const ContactNavigator = () => {
+  return (
+  <View style={{ flex: 1 }}>
+      <Stack.Navigator
+        initialRouteName="Contact"
         screenOptions={({navigation}) => ({
           headerStyle: {
             backgroundColor: "#512DA8"
@@ -131,12 +119,51 @@ const Main = () => {
           )
         })
       }
-      >
-        <Stack.Screen name="About Us" component={About}/>
-      </Stack.Navigator>
-    </View>
-    )
-  };
+    >
+      <Stack.Screen name="Contact" component={Contact}/>
+    </Stack.Navigator>
+  </View>
+  )
+};
+
+const AboutUsNavigator = () => {
+  return (
+  <View style={{ flex: 1}}>
+      <Stack.Navigator initialRouteName="AboutUs"
+      screenOptions={({navigation}) => ({
+        headerStyle: {
+          backgroundColor: "#512DA8"
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          color: "#fff"
+        },
+        headerLeft: () => (
+          <Icon
+            name="menu" 
+            size={24} 
+            color="white" 
+            onPress={() => navigation.toggleDrawer()}
+          />
+        )
+      })
+    }
+    >
+      <Stack.Screen name="About Us" component={About}/>
+    </Stack.Navigator>
+  </View>
+  )
+};
+
+
+const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
+
+  useEffect(() => {
+    fetchDishes();
+    fetchLeaders();
+    fetchComments();
+    fetchPromos();
+  }, []);
 
   const CustomDrawerContentComponent = (props) => (
     <DrawerContentScrollView>
@@ -253,6 +280,4 @@ const styles = StyleSheet.create({
   }
 });
 
-
-
-export default Main;
+export default connect('', mapDispatchToProps)(Main);

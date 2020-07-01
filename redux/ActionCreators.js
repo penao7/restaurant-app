@@ -73,9 +73,8 @@ export const fetchComments = () => (dispatch) => {
 
     // Handle Promotions
 
-    dispatch(promosLoading());
-
     export const fetchPromos = () => (dispatch) => {
+      dispatch(promosLoading());
       return fetch(baseUrl + "promotions")
         .then(response => {
           if (response.ok) {
@@ -92,7 +91,7 @@ export const fetchComments = () => (dispatch) => {
         })
         .then(response => response.json())
         .then(response => dispatch(addPromos(response)))
-        .catch(error => dispatch(promotionsFailed(error.message)))
+        .catch(error => dispatch(promosFailed(error.message)))
       };
 
       export const promosLoading = () => ({
@@ -111,9 +110,9 @@ export const fetchComments = () => (dispatch) => {
   
    // Handle Leaders
 
-   dispatch(leadersLoading());
-
    export const fetchLeaders = () => (dispatch) => {
+    dispatch(leadersLoading());
+
      return fetch(baseUrl + "leaders")
        .then(response => {
          if (response.ok) {
