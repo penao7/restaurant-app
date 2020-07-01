@@ -3,6 +3,7 @@ import { View, ScrollView, Text } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import { Loading } from './LoadingComponent';
 
 const mapStateToProps = state => {
   return {
@@ -12,10 +13,18 @@ const mapStateToProps = state => {
   };
 };
 
-const RenderItem = ({item}) => {
+const RenderItem = ({item, isLoading, errMess}) => {
+
   return (
-    item
+    isLoading
+    ? <Loading/>
+    : errMess
     ? 
+      <View>
+        <Text>{errMess}</Text>
+      </View>
+    : item
+    ?
       <Card
         featuredTitle={item.name}
         featuredSubtitle={item.designation}
@@ -35,12 +44,19 @@ const Home = ({dishes, promotions, leaders}) => {
     <ScrollView>
       <RenderItem
         item={dishes.dishes.filter(dish => dish.featured)[0]}
+        errMess={dishes.errMess}
+        isLoading={dishes.isLoading}
+      
       />
       <RenderItem
         item={leaders.leaders.filter(leader => leader.featured)[0]}
+        errMess={leaders.errMess}
+        isLoading={leaders.isLoading}
       />
       <RenderItem
         item={promotions.promotions.filter(promotion => promotion.featured)[0]}
+        errMess={promotions.errMess}
+        isLoading={promotions.isLoading}
       />
     </ScrollView>
   );

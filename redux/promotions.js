@@ -1,4 +1,4 @@
-import * as ActiontTypes from './ActionTypes';
+import * as ActionTypes from './ActionTypes';
 
 export const promotions = (state = {
   isLoading: true,
@@ -6,13 +6,13 @@ export const promotions = (state = {
   promotions: []
 }, action) => {
   switch(action.type) {
-    case ActiontTypes.ADD_PROMOS:
-      return {...state, isLoading: true, errMess: "", promotions: action.payload};
+    case ActionTypes.ADD_PROMOS:
+      return {...state, isLoading: false, errMess: "", promotions: action.payload};
 
-    case ActiontTypes.PROMOS_LOADING:
+    case ActionTypes.PROMOS_LOADING:
       return {...state, isLoading: true, errMess: "", promotions: []};
 
-    case ActiontTypes.PROMOS_FAILED:
+    case ActionTypes.PROMOS_FAILED:
       return {...state, isLoading: false, errMess: action.payload, promotions: []};
 
     default:

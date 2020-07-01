@@ -15,8 +15,8 @@ export const fetchComments = () => (dispatch) => {
       }
     },
     error => {
-      let errMess = new Error(error.message);
-      throw errMess
+      let errmess = new Error(error.message);
+      throw errmess
     })
     .then(response => response.json())
     .then(response => dispatch(addComments(response)))
@@ -49,8 +49,8 @@ export const fetchComments = () => (dispatch) => {
         }
       },
       error => {
-        let errMess = new Error(error.message);
-        throw errMess
+        let errmess = new Error(error.message);
+        throw errmess
       })
       .then(response => response.json())
       .then(response => dispatch(addDishes(response)))
@@ -86,8 +86,8 @@ export const fetchComments = () => (dispatch) => {
           }
         },
         error => {
-          let errMess = new Error(error.message);
-          throw errMess
+          let errmess = new Error(error.message);
+          throw errmess
         })
         .then(response => response.json())
         .then(response => dispatch(addPromos(response)))
@@ -124,8 +124,8 @@ export const fetchComments = () => (dispatch) => {
          }
        },
        error => {
-         let errMess = new Error(error.message);
-         throw errMess
+         let errmess = new Error(error.message);
+         throw errmess
        })
        .then(response => response.json())
        .then(response => dispatch(addLeaders(response)))
@@ -145,3 +145,16 @@ export const fetchComments = () => (dispatch) => {
        type: ActionTypes.ADD_LEADERS,
        payload: leaders
      });
+
+     // Handle Favourites
+
+     export const postFavourite = (dishId) => (dispatch) => {
+         dispatch(addFavourite(dishId));
+     };
+
+     export const addFavourite = (dishId) => ({
+       type: ActionTypes.ADD_FAVOURITE,
+       payload: dishId
+     });
+
+ 

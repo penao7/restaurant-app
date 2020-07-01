@@ -3,15 +3,21 @@ import { Text, View, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import { postFavourite } from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
   return {
     dishes: state.dishes,
-    comments: state.comments
+    comments: state.comments,
+    favourites: state.favourites
   };
 };
 
-const RenderDish = ({dish, favourite, onPress, onDelete}) => {
+const mapDispatchToProps = dispatch => ({
+  postFavourite: (dishId) => dispatch(postFavourite(dishId))
+});
+  
+const RenderDish = ({dish, favourite, onPress}) => {
   return (
     dish 
     ?
@@ -28,7 +34,7 @@ const RenderDish = ({dish, favourite, onPress, onDelete}) => {
           name={favourite ? "heart" : "heart-o"}
           type="font-awesome"
           color="#f50"
-          onPress={() => favourite ? onDelete() : onPress()}
+          onPress={() => onPress()}
         >
         </Icon>
       </Card>
@@ -77,33 +83,24 @@ const RenderComments = ({comments}) => {
 
 };
 
-const Dishdetail = ({dishes, comments, route}) => {
-
-  const [data, setData] = useState({
-    favourites: []
-  });
+const Dishdetail = ({dishes, favourites, comments, route, postFavourite}) => {
 
   const dishId = route.params.dishId
 
   const markFavourite = (dishId) => {
-    setData({...data, favourites: data.favourites.concat(dishId)})
+    postFavourite(dishId);
   };
-
-  const removeFavourite = (dishId) => {
-    setData({...data, favourites: data.favourites.filter(favourite => favourite !== dishId)})
-  } 
 
   return (
     <ScrollView>
       <RenderDish 
         dish={dishes.dishes[+dishId]}
-        favourite={data.favourites.some(el => el === dishId)}
+        favourite={favourites.some(el => el === dishId)}
         onPress={() => markFavourite(dishId)}
-        onDelete={() => removeFavourite(dishId)}
       />
       <RenderComments comments={comments.comments.filter(comment => comment.dishId === dishId)}/>    
     </ScrollView>  
   );
 };
 
-export default connect(mapStateToProps)(Dishdetail);
+export default connect(mapStateToProps, mapDispatchToProps)(Dishdetail);

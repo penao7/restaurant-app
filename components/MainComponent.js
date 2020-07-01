@@ -10,7 +10,6 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '
 import { Icon } from 'react-native-elements';
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
 import { connect } from 'react-redux';
-import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
