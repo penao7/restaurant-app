@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Home from './HomeComponent';
 import Menu from './MenuComponent';
 import About from './AboutComponent';
 import Dishdetail from './DishdetailComponent';
 import Contact from './ContactComponent';
-import { Text, View, Platform, Image, StyleSheet, SafeAreaView } from 'react-native';
+import Reservation from './ReservationComponent';
+import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { Icon } from 'react-native-elements';
@@ -12,16 +13,8 @@ import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/
 import { connect } from 'react-redux';
 
 const Stack = createStackNavigator();
+const RootStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
-const mapStateToProps = state => {
-  return {
-    dishes: state.dishes,
-    comments: state.comments,
-    promotions: state.promotions,
-    leaders: state.leaders
-  };
-};
 
 const mapDispatchToProps = dispatch => ({
   fetchDishes: () => dispatch(fetchDishes()),
@@ -31,26 +24,42 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const HomeNavigator = () => {
+
   return (
   <View style={{ flex: 1 }}>
-      <Stack.Navigator initialRouteName="Home"
+      <Stack.Navigator
       screenOptions={({navigation}) => ({
           headerStyle: {
-            backgroundColor: "#512DA8"
+            backgroundColor: "#512DA8",
           },
           headerTintColor: "#fff",
           headerTitleStyle: {
-            color: "#fff"
+            color: "#fff",
+            textAlign: 'center'
           },
           headerLeft: () => (
-            <Icon
-              name="menu" 
-              size={24} 
-              color="white"
-              onPress={() => navigation.toggleDrawer()}
-            />
+            <TouchableOpacity style={{margin: 10}}>
+              <Icon
+                name="menu" 
+                size={30} 
+                color="white"
+                onPress={() => navigation.toggleDrawer()}
+              />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity style={{margin: 20}}>
+              <Icon
+                name="cutlery"
+                type="font-awesome"
+                size={24} 
+                color="white"
+                onPress={() => navigation.navigate('Reserve a table')}
+              />
+            </TouchableOpacity>
           )
-        })
+          }
+        )
       }
     >
       <Stack.Screen
@@ -65,28 +74,45 @@ const HomeNavigator = () => {
 const MenuNavigator = () => {
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Navigator initialRouteName="Menu"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "#512DA8"
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            color: "#fff"
-          }
-        }}
+        <Stack.Navigator
+          initialRouteName="Menu"
+          screenOptions={({navigation}) => ({
+            headerStyle: {
+              backgroundColor: "#512DA8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              color: "#fff",
+              textAlign: 'center'
+            },
+            headerRight: () => (
+              <TouchableOpacity style={{margin: 20}}>
+                <Icon
+                  name="cutlery"
+                  type="font-awesome"
+                  size={24} 
+                  color="white"
+                  onPress={() => navigation.navigate('Reserve a table')}
+                />
+              </TouchableOpacity>
+            )
+            }
+          )
+        }
       >
         <Stack.Screen 
           name="Menu" 
           component={Menu}
-          options={({navigation}) => ({ 
+          options={({navigation}) => ({
             headerLeft: () => (
-              <Icon
-                name="menu" 
-                size={24} 
-                color="white" 
-                onPress={() => navigation.toggleDrawer()}
-              />
+              <TouchableOpacity style={{margin: 10}}>
+                <Icon
+                  name="menu" 
+                  size={30} 
+                  color="white"
+                  onPress={() => navigation.toggleDrawer()}
+                />
+              </TouchableOpacity>
           )})}
         />
         <Stack.Screen name="Dishdetail" component={Dishdetail}/>
@@ -97,28 +123,42 @@ const MenuNavigator = () => {
 
 const ContactNavigator = () => {
   return (
-  <View style={{ flex: 1 }}>
-      <Stack.Navigator
-        initialRouteName="Contact"
+    <View style={{ flex: 1 }}>
+        <Stack.Navigator
         screenOptions={({navigation}) => ({
-          headerStyle: {
-            backgroundColor: "#512DA8"
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            color: "#fff"
-          },
-          headerLeft: () => (
-            <Icon
-              name="menu" 
-              size={24} 
-              color="white" 
-              onPress={() => navigation.toggleDrawer()}
-            />
+            headerStyle: {
+              backgroundColor: "#512DA8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              color: "#fff",
+              textAlign: 'center'
+            },
+            headerLeft: () => (
+              <TouchableOpacity style={{margin: 10}}>
+                <Icon
+                  name="menu" 
+                  size={30} 
+                  color="white"
+                  onPress={() => navigation.toggleDrawer()}
+                />
+              </TouchableOpacity>
+            ),
+            headerRight: () => (
+              <TouchableOpacity style={{margin: 20}}>
+                <Icon
+                  name="cutlery"
+                  type="font-awesome"
+                  size={24} 
+                  color="white"
+                  onPress={() => navigation.navigate('Reserve a table')}
+                />
+              </TouchableOpacity>
+            )
+            }
           )
-        })
-      }
-    >
+        }
+      >
       <Stack.Screen name="Contact" component={Contact}/>
     </Stack.Navigator>
   </View>
@@ -127,33 +167,47 @@ const ContactNavigator = () => {
 
 const AboutUsNavigator = () => {
   return (
-  <View style={{ flex: 1}}>
-      <Stack.Navigator initialRouteName="AboutUs"
-      screenOptions={({navigation}) => ({
-        headerStyle: {
-          backgroundColor: "#512DA8"
-        },
-        headerTintColor: "#fff",
-        headerTitleStyle: {
-          color: "#fff"
-        },
-        headerLeft: () => (
-          <Icon
-            name="menu" 
-            size={24} 
-            color="white" 
-            onPress={() => navigation.toggleDrawer()}
-          />
-        )
-      })
-    }
-    >
+    <View style={{ flex: 1 }}>
+        <Stack.Navigator
+        screenOptions={({navigation}) => ({
+            headerStyle: {
+              backgroundColor: "#512DA8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              color: "#fff",
+              textAlign: 'center'
+            },
+            headerLeft: () => (
+              <TouchableOpacity style={{margin: 10}}>
+                <Icon
+                  name="menu" 
+                  size={30} 
+                  color="white"
+                  onPress={() => navigation.toggleDrawer()}
+                />
+              </TouchableOpacity>
+            ),
+            headerRight: () => (
+              <TouchableOpacity style={{margin: 20}}>
+                <Icon
+                  name="cutlery"
+                  type="font-awesome"
+                  size={24} 
+                  color="white"
+                  onPress={() => navigation.navigate('Reserve a table')}
+                />
+              </TouchableOpacity>
+            )
+            }
+          )
+        }
+      >
       <Stack.Screen name="About Us" component={About}/>
     </Stack.Navigator>
   </View>
   )
 };
-
 
 const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
 
@@ -246,12 +300,88 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
             )
           }}
         />
+        <Drawer.Screen 
+          name="Reserve Table" 
+          initialRouteName="Menu"
+          component={ReservationNavigator}
+          options={() => ({
+            drawerLabel: "Reserve a table",
+            drawerIcon: ({tintColor}) => (
+              <Icon
+                name="info-circle"
+                type="font-awesome"
+                size={28}
+                color={tintColor}
+              />
+            )
+          })}
+        />
       </Drawer.Navigator>
     );
   };
 
+  const ReservationNavigator = () => {
+    return (
+      <View style={{ flex: 1 }}>
+        <Stack.Navigator
+          screenOptions={() => ({
+            headerStyle: {
+              backgroundColor: "#512DA8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              color: "#fff",
+            }
+          })
+          }
+          >
+          <Stack.Screen 
+            name="Reserve a table" 
+            component={Reservation}
+            options={({navigation}) => ({
+              headerLeft: () => (
+                <TouchableOpacity style={{margin: 10}}>
+                  <Icon
+                    name="menu" 
+                    size={30} 
+                    color="white"
+                    onPress={() => navigation.toggleDrawer()}
+                  />
+                </TouchableOpacity>
+            )})}
+          />
+          </Stack.Navigator>
+        </View>
+    );
+  };
+
+  const RootStackNavigator = () => {
+    return (
+    <RootStack.Navigator
+        screenOptions={() => ({
+          headerStyle: {
+            backgroundColor: "#512DA8"
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            color: "#fff",
+        }})}
+        model='modal'>
+        <RootStack.Screen
+          name='Main'
+          component={MainNavigator}
+          options={{ headerShown: false}}
+        />
+      <RootStack.Screen 
+          name="Reserve a table" 
+          component={Reservation}
+      />
+    </RootStack.Navigator>
+    );
+  };
+
   return (
-    <MainNavigator/>
+    <RootStackNavigator/>
   );
 };
 

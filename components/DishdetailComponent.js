@@ -98,8 +98,8 @@ const Dishdetail = ({dishes, favourites, comments, route, postFavourite}) => {
         favourite={favourites.some(el => el === dishId)}
         onPress={() => markFavourite(dishId)}
       />
-      <RenderComments comments={comments.comments.filter(comment => comment.dishId === dishId)}/>    
-    </ScrollView>  
+      <RenderComments comments={comments.comments.filter(comment => comment.dishId === dishId)}/>
+    </ScrollView>
   );
 };
 

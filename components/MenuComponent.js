@@ -1,7 +1,7 @@
 import React from 'react';
-import { FlatList, View, Text } from 'react-native';
+import { FlatList } from 'react-native';
 import { Tile } from 'react-native-elements';
-import { connect } from 'react-redux';
+import { connect, ScrollView } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
 
