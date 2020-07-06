@@ -180,7 +180,7 @@ export const fetchComments = () => (dispatch) => {
 
      // Handle Favourites
 
-     export const postFavourite = (dishId) => (dispatch) => {
+     export const toggleFavourite = (dishId) => (dispatch) => {
          dispatch(addFavourite(dishId));
      };
 

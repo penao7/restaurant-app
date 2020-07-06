@@ -4,6 +4,9 @@ import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
+import { toggleFavourite } from '../redux/ActionCreators';
+import Swipeout from 'react-native-swipeout';
+
 
 const mapStateToProps = state => {
   return ({
@@ -12,13 +15,29 @@ const mapStateToProps = state => {
   });
 };
 
-const Favourites = ({dishes, favourites, navigation}) => {
+const mapDispatchToProps = dispatch => ({
+  toggleFavourite: dishId => dispatch(toggleFavourite(dishId))
+});
+
+const Favourites = ({dishes, favourites, navigation, toggleFavourite}) => {
 
   const { navigate } = navigation;
-
       
   const renderMenuItem = ({item, index}) => {
-      return (
+
+    const rightButton = [
+      {
+        text: 'Delete',
+        type: 'delete',
+        onPress: () => toggleFavourite(item.id)
+      }
+    ];
+
+    return (
+      <Swipeout
+        right={rightButton}
+        autoClose={true}
+      >
         <ListItem
           key={index}
           title={item.name}
@@ -26,7 +45,8 @@ const Favourites = ({dishes, favourites, navigation}) => {
           hideChevron={true}
           onPress={() => navigate('Dishdetail', {dishId: item.id})}
           leftAvatar={{ source: {uri: baseUrl + item.image}}}
-        />
+      />
+      </Swipeout>
       );
   };
 
@@ -49,4 +69,4 @@ const Favourites = ({dishes, favourites, navigation}) => {
   );
 };
 
-export default connect(mapStateToProps)(Favourites);
+export default connect(mapStateToProps, mapDispatchToProps)(Favourites);

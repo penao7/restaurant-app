@@ -3,7 +3,7 @@ import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button } from 'rea
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
-import { postFavourite, postComment } from '../redux/ActionCreators';
+import { toggleFavourite, postComment } from '../redux/ActionCreators';
 import moment from 'moment';
 
 const mapStateToProps = state => {
@@ -15,7 +15,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  postFavourite: (dishId) => dispatch(postFavourite(dishId)),
+  toggleFavourite: (dishId) => dispatch(toggleFavourite(dishId)),
   postComment: (comment) => dispatch(postComment(comment))
 });
   
@@ -92,7 +92,7 @@ const RenderComments = ({comments}) => {
 
 };
 
-const Dishdetail = ({dishes, favourites, comments, route, postFavourite, postComment}) => {
+const Dishdetail = ({dishes, favourites, comments, route, toggleFavourite, postComment}) => {
 
   const dishId = route.params.dishId
 
@@ -133,7 +133,7 @@ const Dishdetail = ({dishes, favourites, comments, route, postFavourite, postCom
   }
 
   const markFavourite = (dishId) => {
-    postFavourite(dishId);
+    toggleFavourite(dishId);
   };
 
   return (
