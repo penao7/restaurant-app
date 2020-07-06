@@ -5,6 +5,7 @@ import About from './AboutComponent';
 import Dishdetail from './DishdetailComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
+import Favourites from './FavouriteComponent';
 import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
@@ -209,6 +210,85 @@ const AboutUsNavigator = () => {
   )
 };
 
+const ReservationNavigator = () => {
+  return (
+    <View style={{ flex: 1 }}>
+      <Stack.Navigator
+        screenOptions={() => ({
+          headerStyle: {
+            backgroundColor: "#512DA8",
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            color: "#fff",
+          }
+        })
+        }
+        >
+        <Stack.Screen 
+          name="Reserve a table" 
+          component={Reservation}
+          options={({navigation}) => ({
+            headerLeft: () => (
+              <TouchableOpacity style={{margin: 10}}>
+                <Icon
+                  name="menu" 
+                  size={30} 
+                  color="white"
+                  onPress={() => navigation.toggleDrawer()}
+                />
+              </TouchableOpacity>
+          )})}
+        />
+        </Stack.Navigator>
+      </View>
+  );
+};
+
+const FavouritesNavigator = () => {
+  return (
+    <View style={{ flex: 1 }}>
+        <Stack.Navigator
+          screenOptions={({navigation}) => ({
+            headerStyle: {
+              backgroundColor: "#512DA8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              color: "#fff",
+              textAlign: 'center'
+            },
+            headerLeft: () => (
+              <TouchableOpacity style={{margin: 10}}>
+                <Icon
+                  name="menu" 
+                  size={30} 
+                  color="white"
+                  onPress={() => navigation.toggleDrawer()}
+                />
+              </TouchableOpacity>
+            ),
+            headerRight: () => (
+              <TouchableOpacity style={{margin: 20}}>
+                <Icon
+                  name="cutlery"
+                  type="font-awesome"
+                  size={24} 
+                  color="white"
+                  onPress={() => navigation.navigate('Reserve a table')}
+                />
+              </TouchableOpacity>
+            )
+            }
+          )
+        }
+      >
+      <Stack.Screen name="Favourites" component={Favourites}/>
+    </Stack.Navigator>
+  </View>
+  )
+};
+
 const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
 
   useEffect(() => {
@@ -256,7 +336,7 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
           }}
         />
         <Drawer.Screen 
-          name ="Menu" 
+          name="Menu" 
           component={MenuNavigator}
           options={{
             drawerLabel: "Menu",
@@ -301,6 +381,22 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
           }}
         />
         <Drawer.Screen 
+          name="Favourites" 
+          initialRouteName="Favourites"
+          component={FavouritesNavigator}
+          options={() => ({
+            drawerLabel: "Favourites",
+            drawerIcon: ({tintColor}) => (
+              <Icon
+                name="heart"
+                type="font-awesome"
+                size={23}
+                color={tintColor}
+              />
+            )
+          })}
+        />
+        <Drawer.Screen 
           name="Reserve Table" 
           initialRouteName="Menu"
           component={ReservationNavigator}
@@ -308,7 +404,7 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
             drawerLabel: "Reserve a table",
             drawerIcon: ({tintColor}) => (
               <Icon
-                name="info-circle"
+                name="cutlery"
                 type="font-awesome"
                 size={28}
                 color={tintColor}
@@ -317,41 +413,6 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
           })}
         />
       </Drawer.Navigator>
-    );
-  };
-
-  const ReservationNavigator = () => {
-    return (
-      <View style={{ flex: 1 }}>
-        <Stack.Navigator
-          screenOptions={() => ({
-            headerStyle: {
-              backgroundColor: "#512DA8",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              color: "#fff",
-            }
-          })
-          }
-          >
-          <Stack.Screen 
-            name="Reserve a table" 
-            component={Reservation}
-            options={({navigation}) => ({
-              headerLeft: () => (
-                <TouchableOpacity style={{margin: 10}}>
-                  <Icon
-                    name="menu" 
-                    size={30} 
-                    color="white"
-                    onPress={() => navigation.toggleDrawer()}
-                  />
-                </TouchableOpacity>
-            )})}
-          />
-          </Stack.Navigator>
-        </View>
     );
   };
 

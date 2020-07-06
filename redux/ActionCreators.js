@@ -33,6 +33,38 @@ export const fetchComments = () => (dispatch) => {
     payload: comments
   });
 
+  export const addComment = (comment) => ({
+    type: ActionTypes.ADD_COMMENT,
+    payload: comment
+  });
+
+  export const postComment = (comment) => (dispatch) => {
+
+    return fetch(baseUrl + "comments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(comment)
+    })
+      .then(response => {
+        if (response.ok) {
+          return response;
+        } else {
+          let error = new Error("Error " + response.status + ": " + response.statusText);
+          error.response = response;
+          throw error;
+        }
+      },
+      error => {
+        let errmess = new Error(error.message);
+        throw errmess
+      })
+      .then(response => response.json())
+      .then(response => dispatch(addComment(response)))
+      .catch(error => alert(error.message))
+  };
+
   // Handle Dishes
 
   export const fetchDishes = () => (dispatch) => {
