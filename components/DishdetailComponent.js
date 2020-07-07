@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { 
   Text, 
   View, 
@@ -31,15 +31,20 @@ const mapDispatchToProps = dispatch => ({
   
 const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
 
+  const handleViewRef = useRef('');
+
   const recognizeDrag = ({dx}) => {
     return (
       dx < -200 ? true  : false
     );
   };
 
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: (e, gestureState) => {
+  const panResponder = useRef(PanResponder.create({
+    onStartShouldSetPanResponder: () => {
       return true;
+    },
+    onPanResponderGrant: () => {
+      handleViewRef.current.shake(800);
     },
     onPanResponderEnd: (e, gestureState) => {
       console.log('pan responder end', gestureState);
@@ -64,13 +69,14 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
       return true;
 
      }
-  });
+  })).current;
 
   return (
     dish 
     ?
     <View>
       <Animatable.View
+        ref={handleViewRef}
         animation="fadeInDown"
         duration={1000}
         delay={500}
