@@ -67,7 +67,7 @@ const mapStateToProps = state => {
     <ScrollView>
       <Animatable.View
         animation="fadeInDown"
-        duration={2000}
+        duration={1500}
         delay={0}
       >
         <Card title="Corporate Leadership">
@@ -83,8 +83,8 @@ const mapStateToProps = state => {
     <ScrollView>
       <Animatable.View
         animation="fadeInDown"
-        duration={2000}
-        delay={1000}
+        duration={1500}
+        delay={0}
       >
         <History/>
         <RenderLeaders leaders={leaders.leaders}/>

@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button } from 'react-native';
+import { 
+  Text, 
+  View, 
+  ScrollView, 
+  FlatList, 
+  Modal, 
+  StyleSheet, 
+  Button,
+  Alert,
+  PanResponder } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -22,14 +31,50 @@ const mapDispatchToProps = dispatch => ({
   
 const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
 
+  const recognizeDrag = ({dx}) => {
+    return (
+      dx < -200 ? true  : false
+    );
+  };
+
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: (e, gestureState) => {
+      return true;
+    },
+    onPanResponderEnd: (e, gestureState) => {
+      console.log('pan responder end', gestureState);
+      if (recognizeDrag(gestureState))
+        Alert.alert(
+          'Add to favourite',
+          'Are you sure you wish to add ' + dish.name + ' to you favourites?',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel pressed'),
+              style: 'cancel'
+            },
+            {
+              text: 'Add',
+              onPress: () => onPress(),
+            }
+          ],
+          { cancelable: false }
+        );
+
+      return true;
+
+     }
+  });
+
   return (
     dish 
     ?
     <View>
       <Animatable.View
         animation="fadeInDown"
-        duration={2000}
-        delay={0}
+        duration={1000}
+        delay={500}
+        {...panResponder.panHandlers}
       >      
         <Card
           featuredTitle={dish.name}
@@ -89,9 +134,9 @@ const RenderComments = ({comments}) => {
 
   return (
     <Animatable.View
-    animation="fadeInUp"
-    duration={2000}
-    delay={0}
+      animation="fadeInUp"
+      duration={1000}
+      delay={500}
     >      
       <Card title="Comments">
         <FlatList

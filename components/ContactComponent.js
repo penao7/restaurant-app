@@ -7,7 +7,7 @@ const Information = () => {
   return (
       <Animatable.View
         animation="fadeInDown"
-        duration={2000}
+        duration={1000}
         delay={0}
       >
         <Card
