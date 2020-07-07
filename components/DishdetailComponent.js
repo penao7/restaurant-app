@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { toggleFavourite, postComment } from '../redux/ActionCreators';
 import moment from 'moment';
+import * as Animatable from 'react-native-animatable';
 
 const mapStateToProps = state => {
   return {
@@ -25,32 +26,38 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
     dish 
     ?
     <View>
-      <Card
-        featuredTitle={dish.name}
-        image={{uri: baseUrl + dish.image}}
-      >
-        <Text style={{margin: 10}}>
-          {dish.description}
-        </Text>
-        <View style={{justifyContent: 'center', flexDirection: 'row'}}>
-          <Icon
-            raised
-            reverse
-            name={favourite ? "heart" : "heart-o"}
-            type="font-awesome"
-            color="#f50"
-            onPress={() => onPress()}
-          />
-          <Icon
-            raised
-            reverse
-            name="pencil"
-            type="font-awesome"
-            color="blue"
-            onPress={() => toggleModal()}
-          />
-        </View>
-      </Card>
+      <Animatable.View
+        animation="fadeInDown"
+        duration={2000}
+        delay={0}
+      >      
+        <Card
+          featuredTitle={dish.name}
+          image={{uri: baseUrl + dish.image}}
+        >
+          <Text style={{margin: 10}}>
+            {dish.description}
+          </Text>
+          <View style={{justifyContent: 'center', flexDirection: 'row'}}>
+            <Icon
+              raised
+              reverse
+              name={favourite ? "heart" : "heart-o"}
+              type="font-awesome"
+              color="#f50"
+              onPress={() => onPress()}
+            />
+            <Icon
+              raised
+              reverse
+              name="pencil"
+              type="font-awesome"
+              color="blue"
+              onPress={() => toggleModal()}
+            />
+          </View>
+        </Card>
+      </Animatable.View>
     </View>
     : <Text></Text>
   );
@@ -81,6 +88,11 @@ const RenderComments = ({comments}) => {
   };
 
   return (
+    <Animatable.View
+    animation="fadeInUp"
+    duration={2000}
+    delay={0}
+    >      
       <Card title="Comments">
         <FlatList
           data={comments}
@@ -88,6 +100,7 @@ const RenderComments = ({comments}) => {
           keyExtractor={item => item.id.toString()}
         />
       </Card>
+    </Animatable.View>
   );
 
 };

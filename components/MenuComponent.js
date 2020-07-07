@@ -4,6 +4,7 @@ import { Tile } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
+import * as Animatable from 'react-native-animatable';
 
 const mapStateToProps = state => {
   return {
@@ -17,14 +18,20 @@ const Menu = ({navigation, dishes}) => {
 
   const renderMenuItem = ({item}) => {
     return (
-      <Tile
-        key={item.name}
-        title={item.name}
-        caption={item.description}
-        featured
-        imageSrc={{ uri: baseUrl + item.image }}
-        onPress={() => navigate('Dishdetail', { dishId: item.id })}
-      />
+      <Animatable.View
+      animation="fadeInRightBig"
+      duration={2000}
+      delay={0}
+    >      
+        <Tile
+          key={item.name}
+          title={item.name}
+          caption={item.description}
+          featured
+          imageSrc={{ uri: baseUrl + item.image }}
+          onPress={() => navigate('Dishdetail', { dishId: item.id })}
+        />
+      </Animatable.View>
     )
   };
 

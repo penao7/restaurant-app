@@ -4,15 +4,13 @@ import { Card, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
-
+import * as Animatable from 'react-native-animatable';
 
 const mapStateToProps = state => {
   return {
     leaders: state.leaders
   };
 };
-
-const About = ({leaders}) => {
 
   const History = () => {
     return (
@@ -54,6 +52,8 @@ const About = ({leaders}) => {
     );
   };
 
+  const About = ({leaders}) => {
+
   return (
     leaders.isLoading
     ?
@@ -65,18 +65,30 @@ const About = ({leaders}) => {
     : leaders.errMess
     ?     
     <ScrollView>
-      <Card title="Corporate Leadership">
-        <View>
-          <Text>
-            {leaders.errMess}
-          </Text>
-        </View>
-      </Card>
+      <Animatable.View
+        animation="fadeInDown"
+        duration={2000}
+        delay={0}
+      >
+        <Card title="Corporate Leadership">
+          <View>
+            <Text>
+              {leaders.errMess}
+            </Text>
+          </View>
+        </Card>
+      </Animatable.View>
     </ScrollView>
     :
     <ScrollView>
-      <History/>
-      <RenderLeaders leaders={leaders.leaders}/>
+      <Animatable.View
+        animation="fadeInDown"
+        duration={2000}
+        delay={1000}
+      >
+        <History/>
+        <RenderLeaders leaders={leaders.leaders}/>
+      </Animatable.View>
     </ScrollView>
   );
 };
