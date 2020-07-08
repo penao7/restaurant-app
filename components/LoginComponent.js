@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Button, StyleSheet } from 'react-native';
-import { Card, Icon, Input, CheckBox } from 'react-native-elements';
+import { Input, CheckBox } from 'react-native-elements';
 import * as SecureStore from 'expo-secure-store';
 
 const Login = () => {
@@ -21,7 +21,7 @@ const Login = () => {
                 username: userinfo.username, 
                 password: userinfo.password,
                 remember: true
-            })
+              })
             : ''
         );
       });

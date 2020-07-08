@@ -20,7 +20,7 @@ const Menu = ({navigation, dishes}) => {
     return (
       <Animatable.View
       animation="fadeInRightBig"
-      duration={2000}
+      duration={1000}
       delay={0}
     >      
         <Tile

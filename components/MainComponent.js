@@ -498,6 +498,9 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
           name="Reserve a table" 
           component={Reservation}
       />
+      <RootStack.Screen 
+        name="Dishdetail" 
+        component={Dishdetail}/>
     </RootStack.Navigator>
     );
   };

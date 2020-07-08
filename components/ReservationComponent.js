@@ -4,6 +4,8 @@ import { Picker } from '@react-native-community/picker';
 import { DateTimePickerModal } from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import * as Animatable from 'react-native-animatable';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
 
 const Reservation = ({ navigation }) => {
 
@@ -38,10 +40,13 @@ const Reservation = ({ navigation }) => {
         },
         {
           text: 'Confirm',
-          onPress: () => console.log('Reservation confirmed')
+          onPress: () => {
+            presentLocalNotification(reservation.date);
+            resetForm();
+          } 
         },
-        { cancelable: false }
-      ]
+      ],
+      { cancelable: false }
     )
     resetForm();
   };
@@ -54,11 +59,38 @@ const Reservation = ({ navigation }) => {
     });
   };
 
+  const obtainNotificationPermission = async () => {
+    let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS);
+    if (permission.status !== 'granted') {
+      permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
+      if(permission.status !== 'granted') {
+        Alert.alert('Permission not granted to show notification');
+      };
+    }
+    return permission;
+  };
+
+  const presentLocalNotification = async (date) => {
+    await obtainNotificationPermission();
+    Notifications.presentLocalNotificationAsync({
+      title: 'Your Reservation',
+      body: 'Reservation for ' + moment(date).format('Do MMMM YYYY, h:mm') + ' requested',
+      ios: {
+        sound: true
+      },
+      android: {
+        sound: true,
+        vibrate: true,
+        color: '#512DA8'
+      }
+    });
+  };
+
   return (
     <ScrollView>
       <Animatable.View
         animation="zoomIn"
-        duration={1500}
+        duration={300}
       >
       <View style={styles.formRow}>
         <Text style={styles.formLabel}>
