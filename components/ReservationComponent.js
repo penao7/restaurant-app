@@ -4,7 +4,7 @@ import { Picker } from '@react-native-community/picker';
 import { DateTimePickerModal } from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import * as Animatable from 'react-native-animatable';
-import { Notifications } from 'expo';
+import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 
 const Reservation = ({ navigation }) => {
@@ -41,7 +41,7 @@ const Reservation = ({ navigation }) => {
         {
           text: 'Confirm',
           onPress: () => {
-            presentLocalNotification(reservation.date);
+            triggerNotification(reservation.date);
             resetForm();
           } 
         },
@@ -60,7 +60,7 @@ const Reservation = ({ navigation }) => {
   };
 
   const obtainNotificationPermission = async () => {
-    let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS);
+    let permission = '';
     if (permission.status !== 'granted') {
       permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
       if(permission.status !== 'granted') {
@@ -70,19 +70,26 @@ const Reservation = ({ navigation }) => {
     return permission;
   };
 
-  const presentLocalNotification = async (date) => {
-    await obtainNotificationPermission();
-    Notifications.presentLocalNotificationAsync({
-      title: 'Your Reservation',
-      body: 'Reservation for ' + moment(date).format('Do MMMM YYYY, h:mm') + ' requested',
-      ios: {
-        sound: true
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false
+    })
+  });
+
+
+  const triggerNotification = async (date) => {
+    await obtainNotificationPermission().then(data => console.log(data));
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Your Reservation',
+        body: 
+          'Your reservation for date ' + 
+          date + moment(date).format('Do MMMM YYYY, h:mm') +
+          ' is requested'
       },
-      android: {
-        sound: true,
-        vibrate: true,
-        color: '#512DA8'
-      }
+      trigger: null
     });
   };
 

@@ -120,31 +120,29 @@ const HomeNavigator = () => {
 const MenuNavigator = () => {
   return (
     <View style={{ flex: 1 }}>
-        <Stack.Navigator
-          initialRouteName="Menu"
-          screenOptions={({navigation}) => ({
-            headerStyle: {
-              backgroundColor: "#512DA8",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              color: "#fff",
-              textAlign: 'center'
-            },
-            headerRight: () => (
-              <TouchableOpacity style={{margin: 20}}>
-                <Icon
-                  name="cutlery"
-                  type="font-awesome"
-                  size={24} 
-                  color="white"
-                  onPress={() => navigation.navigate('Reserve a table')}
-                />
-              </TouchableOpacity>
-            )
-            }
+      <Stack.Navigator
+        initialRouteName="Menu"
+        screenOptions={({navigation}) => ({
+          headerStyle: {
+            backgroundColor: "#512DA8",
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            color: "#fff",
+            textAlign: 'center'
+          },
+          headerRight: () => (
+            <TouchableOpacity style={{margin: 20}}>
+              <Icon
+                name="cutlery"
+                type="font-awesome"
+                size={24} 
+                color="white"
+                onPress={() => navigation.navigate('Reserve a table')}
+              />
+            </TouchableOpacity>
           )
-        }
+        })}
       >
         <Stack.Screen 
           name="Menu" 
@@ -161,7 +159,6 @@ const MenuNavigator = () => {
               </TouchableOpacity>
           )})}
         />
-        <Stack.Screen name="Dishdetail" component={Dishdetail}/>
       </Stack.Navigator>
     </View>
   )
@@ -487,6 +484,8 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
           headerTintColor: "#fff",
           headerTitleStyle: {
             color: "#fff",
+            textAlign: "center",
+            flex: 1
         }})}
         model='modal'>
         <RootStack.Screen
@@ -500,7 +499,21 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
       />
       <RootStack.Screen 
         name="Dishdetail" 
-        component={Dishdetail}/>
+        component={Dishdetail}
+        options={({navigation}) => ({
+          headerRight: () => (
+            <TouchableOpacity style={{margin: 20}}>
+              <Icon
+                name="cutlery"
+                type="font-awesome"
+                size={24} 
+                color="white"
+                onPress={() => navigation.navigate('Reserve a table')}
+              />
+            </TouchableOpacity>
+          )
+        })}
+        />
     </RootStack.Navigator>
     );
   };
