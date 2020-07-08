@@ -8,7 +8,8 @@ import {
   StyleSheet, 
   Button,
   Alert,
-  PanResponder } from 'react-native';
+  PanResponder,
+  Share } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -43,6 +44,16 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
     return (
       dx > 200 ? true : false
     );
+  };
+
+  const shareDish = (title, message, url) => {
+    Share.share({
+      title: title,
+      message: title + ': ' + message + ' ' + url,
+      url: url
+    }, {
+      dialogTitle: 'Share ' + title
+    });
   };
 
   const panResponder = useRef(PanResponder.create({
@@ -112,6 +123,14 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
               type="font-awesome"
               color="blue"
               onPress={() => toggleModal()}
+            />
+            <Icon
+              raised
+              reverse
+              name="share"
+              type="font-awesome"
+              color="#51D2A8"
+              onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)}
             />
           </View>
         </Card>
