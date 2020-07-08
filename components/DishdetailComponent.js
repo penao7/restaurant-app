@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Text, 
   View, 
@@ -39,6 +39,12 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
     );
   };
 
+  const recognizeComment = ({dx}) => {
+    return (
+      dx > 200 ? true : false
+    );
+  };
+
   const panResponder = useRef(PanResponder.create({
     onStartShouldSetPanResponder: () => {
       return true;
@@ -48,7 +54,7 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
     },
     onPanResponderEnd: (e, gestureState) => {
       console.log('pan responder end', gestureState);
-      if (recognizeDrag(gestureState))
+      if (recognizeDrag(gestureState)) {
         Alert.alert(
           'Add to favourite',
           'Are you sure you wish to add ' + dish.name + ' to you favourites?',
@@ -65,9 +71,10 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
           ],
           { cancelable: false }
         );
-
+      } else if (recognizeComment(gestureState)) {
+        toggleModal()
+      };
       return true;
-
      }
   })).current;
 

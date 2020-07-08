@@ -1,35 +1,49 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, ScrollView, Switch, Platform, Modal} from 'react-native';
+import { View, Text, Button, StyleSheet, ScrollView, Switch, Platform, Alert } from 'react-native';
 import { Picker } from '@react-native-community/picker';
 import { DateTimePickerModal } from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+import * as Animatable from 'react-native-animatable';
 
 const Reservation = ({ navigation }) => {
 
   const [dateTimeVisibility, setDateTimeVisibility] = useState(false);
-  const [showModal, setShowModal] = useState(false);
 
   const [reservation, setReservation] = useState({
     guests: 1,
     type: false,
-    date: new Date()
+    date: new Date().toISOString()
   });
 
   const toggleDate = () => {
     setDateTimeVisibility(!dateTimeVisibility);
   };
 
-  const toggleModal = () => {
-    setShowModal(!showModal);
-  };
-
   const handleConfirm = (date) => {
     setDateTimeVisibility(Platform.OS === 'ios');
-    setReservation({...reservation, date: date})
+    setReservation({...reservation, date: date.toISOString()})
   };
 
   const handleReservation = () => {
-    toggleModal();
+    Alert.alert(
+      'Confirmation',
+      'Number of guests: ' + reservation.guests + '\n' +
+      `Menu type: ${reservation.type ? 'Tasting menu' : 'Classic menu'}` +
+      '\nDate and Time: ' + moment(reservation.date).format('Do MMMM YYYY, h:mm') + '\n',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel pressed'),
+          style: 'cancel'
+        },
+        {
+          text: 'Confirm',
+          onPress: () => console.log('Reservation confirmed')
+        },
+        { cancelable: false }
+      ]
+    )
+    resetForm();
   };
 
   const resetForm = () => {
@@ -42,6 +56,10 @@ const Reservation = ({ navigation }) => {
 
   return (
     <ScrollView>
+      <Animatable.View
+        animation="zoomIn"
+        duration={1500}
+      >
       <View style={styles.formRow}>
         <Text style={styles.formLabel}>
           Number of Guests
@@ -51,12 +69,12 @@ const Reservation = ({ navigation }) => {
           selectedValue={reservation.guests}
           onValueChange={itemValue => setReservation({...reservation, guests: itemValue})}
         >
-            <Picker.Item label='1' value='1' />
-            <Picker.Item label='2' value='2' />
-            <Picker.Item label='3' value='3' />
-            <Picker.Item label='4' value='4' />
-            <Picker.Item label='5' value='5' />
-            <Picker.Item label='6' value='6' />
+          <Picker.Item label='1' value='1' />
+          <Picker.Item label='2' value='2' />
+          <Picker.Item label='3' value='3' />
+          <Picker.Item label='4' value='4' />
+          <Picker.Item label='5' value='5' />
+          <Picker.Item label='6' value='6' />
         </Picker>
       </View>
       <View style={styles.formRow}>
@@ -77,18 +95,18 @@ const Reservation = ({ navigation }) => {
           <Text style={styles.formDateItem}>
             {
               reservation.date 
-              ? moment(reservation.date.toISOString()).format('Do MMMM YYYY, h:mm') 
+              ? moment(reservation.date).format('Do MMMM YYYY, h:mm')
               : 'Please select date'
             }
           </Text>
-          <DateTimePickerModal
-            isVisible={dateTimeVisibility}
-            mode='datetime'
-            locale='en_GB'
-            date={new Date()}
-            onConfirm={handleConfirm}
-            onCancel={toggleDate}
-          />
+        <DateTimePickerModal
+          isVisible={dateTimeVisibility}
+          mode='datetime'
+          locale='en_GB'
+          date={new Date()}
+          onConfirm={handleConfirm}
+          onCancel={toggleDate}
+        />
       </View>
       <View style={styles.formRow}>
         <View style={styles.formButtonItem}>
@@ -103,38 +121,10 @@ const Reservation = ({ navigation }) => {
           />
         </View>
       </View>
-      <Modal
-        animationType={'slide'}
-        transparent={false}
-        visible={showModal}
-        onDismiss={() => toggleModal()}
-        onRequestClose={() => {toggleModal(); resetForm()}}
-      >
-        <View style={styles.modal}>
-          <Text style={styles.modalTitle}>
-            Your Reservation
-          </Text>
-          <Text style={styles.modalText}>
-            Number of Guests: {reservation.guests}
-          </Text>
-          <Text style={styles.modalText}>
-            Menu type: {reservation.menu ? 'Tasting menu' : 'Classic menu'}  
-          </Text>
-          <Text style={styles.modalText}>
-            {moment(reservation.date.toISOString()).format('Do MMMM YYYY, h:mm')}
-          </Text>
-          <Button
-            onPress={() => {toggleModal(); resetForm()}}
-            color='#512DA8'
-            title='close'
-          />
-        </View>
-      </Modal>
-
+      </Animatable.View>
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   formRow: {
     alignItems: 'center',
