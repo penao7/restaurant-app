@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Login from './LoginComponent';
 import Home from './HomeComponent';
 import Menu from './MenuComponent';
@@ -7,12 +7,21 @@ import Dishdetail from './DishdetailComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
 import Favourites from './FavouriteComponent';
-import { Text, View, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { 
+  Text, 
+  View, 
+  Image, 
+  StyleSheet, 
+  SafeAreaView, 
+  TouchableOpacity,
+  ToastAndroid } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { Icon } from 'react-native-elements';
 import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
 import { connect } from 'react-redux';
+
 
 const Stack = createStackNavigator();
 const RootStack = createStackNavigator();
@@ -334,11 +343,39 @@ const FavouritesNavigator = () => {
 
 const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
 
+  const handleConnectivityChange = (state) => {
+    switch (state.type) {
+      case 'none':
+        ToastAndroid.show('You are now offline!', ToastAndroid.SHORT);
+        break;
+      case 'wifi':
+        ToastAndroid.show('You are now connected to WiFi!', ToastAndroid.SHORT);
+        break;
+      case 'cellular':
+        ToastAndroid.show('You are now connected to Cellular network!', ToastAndroid.SHORT);
+        break;
+      case 'unknown':
+        ToastAndroid.show('You now have an unknown connection!', ToastAndroid.SHORT);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const unsubscribe = () => NetInfo.addEventListener(handleConnectivityChange);
+
   useEffect(() => {
     fetchDishes();
     fetchLeaders();
     fetchComments();
     fetchPromos();
+
+    NetInfo.addEventListener(handleConnectivityChange);
+
+    return (
+      unsubscribe = () => NetInfo.addEventListener(handleConnectivityChange)
+    );
+
   }, []);
 
   const CustomDrawerContentComponent = (props) => (

@@ -6,7 +6,7 @@ import { baseUrl } from '../shared/baseUrl';
 import * as SecureStore from 'expo-secure-store';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
-import { Asset } from 'expo-asset';
+import { Animated } from 'react-native';
 import { ImageManipulator } from 'expo-image-manipulator';
 
 const Login = createBottomTabNavigator();
@@ -138,10 +138,20 @@ const RegisterTab = () => {
       });
       
       if(!capturedImage.cancelled) {
-        console.log(capturedImage);
-        setRegisterationInfo({ ...registerationInfo, imageUrl: capturedImage.uri });
+        processImage(capturedImage.uri);
       };
     };
+  };
+
+  const processImage = async (imageUri) => {
+    let processedImage = await ImageManipulator.manipulate(
+      imageUri, 
+        [
+          { resize: { width: 400 }}
+        ],
+        { format: 'png'}
+    );
+    setRegisterationInfo({...registerationInfo, image: processedImage.uri})
   };
 
   const handleRegisteration = () => {
@@ -267,6 +277,13 @@ const LoginTabs = () => {
       />
       <Login.Screen name="Register" component={RegisterTab}/>
     </Login.Navigator>
+  );
+};
+
+const BottomBar = (props) => {
+  return (
+      <LoginTabs {...props} style={{backgroundColor: 'transparent'}}/>
+      
   );
 };
 
