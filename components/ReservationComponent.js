@@ -60,7 +60,7 @@ const Reservation = ({ navigation }) => {
   };
 
   const obtainNotificationPermission = async () => {
-    let permission = '';
+    let permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
     if (permission.status !== 'granted') {
       permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
       if(permission.status !== 'granted') {
@@ -86,7 +86,7 @@ const Reservation = ({ navigation }) => {
         title: 'Your Reservation',
         body: 
           'Your reservation for date ' + 
-          date + moment(date).format('Do MMMM YYYY, h:mm') +
+          moment(date).format('Do MMMM YYYY, h:mm') +
           ' is requested'
       },
       trigger: null
