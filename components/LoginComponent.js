@@ -6,6 +6,8 @@ import { baseUrl } from '../shared/baseUrl';
 import * as SecureStore from 'expo-secure-store';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
+import { Asset } from 'expo-asset';
+import { ImageManipulator } from 'expo-image-manipulator';
 
 const Login = createBottomTabNavigator();
 
@@ -121,7 +123,7 @@ const RegisterTab = () => {
     lastname: '',
     email: '',
     remember: false,
-    imageUrl: baseUrl + 'image/logo.png'
+    imageUrl: baseUrl + 'images/logo.png'
   });
 
   const getImageFromCamera = async () => {
