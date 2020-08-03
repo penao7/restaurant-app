@@ -22,8 +22,23 @@ export const LEADERS_LOADING = "LEADERS_LOADING";
 export const ADD_LEADERS = "ADD_LEADERS";
 export const LEADERS_FAILED = "LEADERS_FAILED";
 
-// For Favourites
+// Favourites
 
-export const POST_FAVOURITE = "POST_FAVOURIE";
-export const ADD_FAVOURITE = "ADD_FAVOURITE";
-export const DELETE_FAVOURITE = "DELETE_FAVOURITE";
+export const FAVOURITES_LOADING = 'FAVOURITES_LOADING';
+export const FAVOURITES_FAILED = 'FAVOURITES_FAILED';
+export const ADD_FAVOURITES = 'ADD_FAVOURITES';
+
+// Login/Logout
+
+export const LOGIN_REQUEST = 'LOGIN_REQUEST';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
+
+// Users
+
+export const CREATE_REQUEST = 'CREATE_REQUEST';
+export const CREATE_SUCCESS = 'CREATE_SUCCESS';
+export const CREATE_FAILURE = 'CREATE_FAILURE';

@@ -12,9 +12,14 @@ const { persistor, store } = ConfigureStore();
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <Main />
-      </NavigationContainer>
+      <PersistGate
+        loading={<Loading/>}
+        persistor={persistor}
+      >
+        <NavigationContainer>
+          <Main />
+        </NavigationContainer>
+      </PersistGate>
     </Provider>
   );
 };

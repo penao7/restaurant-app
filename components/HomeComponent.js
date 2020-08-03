@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, Animated, Easing } from 'react-native';
+import { ScrollView, View, Text, Animated, Easing } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -13,32 +13,31 @@ const mapStateToProps = state => {
   };
 };
 
-const RenderItem = ({item, isLoading, errMess}) => {
-
+const RenderItem = ({ item, isLoading, errMess }) => {
   return (
     isLoading
-    ? <Loading/>
-    : errMess
-    ? 
+      ? <Loading />
+      : errMess
+      ?
       <View>
         <Text>{errMess}</Text>
       </View>
-    : item
-    ?
-      <Card
-        featuredTitle={item.name}
-        featuredSubtitle={item.designation}
-        image={{ uri: baseUrl + item.image}}
-      >
-        <Text style={{margin: 10}}>
-          {item.description}
-        </Text>
-      </Card>
-    : <View></View>
+      : item
+      ?
+        <Card
+          featuredTitle={item.name}
+          featuredSubtitle={item.designation}
+          image={{ uri: baseUrl + item.image }}
+        >
+          <Text style={{ margin: 10 }}>
+            {item.description}
+          </Text>
+        </Card>
+      : <View></View>
   );
 };
 
-const Home = ({dishes, promotions, leaders}) => {
+const Home = ({ dishes, promotions, leaders }) => {
 
   const [animatedValue] = useState(new Animated.Value(0));
 
@@ -48,7 +47,7 @@ const Home = ({dishes, promotions, leaders}) => {
 
   const animate = () => {
     animatedValue.setValue(0);
-    Animated.timing (
+    Animated.timing(
       animatedValue,
       {
         toValue: 8,
@@ -76,21 +75,21 @@ const Home = ({dishes, promotions, leaders}) => {
 
   return (
     <ScrollView>
-        <RenderItem
-          item={dishes.dishes.filter(dish => dish.featured)[0]}
-          errMess={dishes.errMess}
-          isLoading={dishes.isLoading}
-        />
-        <RenderItem
-          item={leaders.leaders.filter(leader => leader.featured)[0]}
-          errMess={leaders.errMess}
-          isLoading={leaders.isLoading}
-        />
-        <RenderItem
-          item={promotions.promotions.filter(promotion => promotion.featured)[0]}
-          errMess={promotions.errMess}
-          isLoading={promotions.isLoading}
-        />
+      <RenderItem
+        item={dishes.dishes.filter(dish => dish.featured)[0]}
+        errMess={dishes.errMess}
+        isLoading={dishes.isLoading}
+      />
+      <RenderItem
+        item={leaders.leaders.filter(leader => leader.featured)[0]}
+        errMess={leaders.errMess}
+        isLoading={leaders.isLoading}
+      />
+      <RenderItem
+        item={promotions.promotions.filter(promotion => promotion.featured)[0]}
+        errMess={promotions.errMess}
+        isLoading={promotions.isLoading}
+      />
     </ScrollView>
   );
 };

@@ -6,6 +6,7 @@ import moment from 'moment';
 import * as Animatable from 'react-native-animatable';
 import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
+import * as Calendar from 'expo-calendar';
 
 const Reservation = ({ navigation }) => {
 
@@ -23,32 +24,7 @@ const Reservation = ({ navigation }) => {
 
   const handleConfirm = (date) => {
     setDateTimeVisibility(Platform.OS === 'ios');
-    setReservation({...reservation, date: date.toISOString()})
-  };
-
-  const handleReservation = () => {
-    Alert.alert(
-      'Confirmation',
-      'Number of guests: ' + reservation.guests + '\n' +
-      `Menu type: ${reservation.type ? 'Tasting menu' : 'Classic menu'}` +
-      '\nDate and Time: ' + moment(reservation.date).format('Do MMMM YYYY, h:mm') + '\n',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel pressed'),
-          style: 'cancel'
-        },
-        {
-          text: 'Confirm',
-          onPress: () => {
-            triggerNotification(reservation.date);
-            resetForm();
-          } 
-        },
-      ],
-      { cancelable: false }
-    )
-    resetForm();
+    setReservation({ ...reservation, date: date.toISOString() })
   };
 
   const resetForm = () => {
@@ -60,14 +36,11 @@ const Reservation = ({ navigation }) => {
   };
 
   const obtainNotificationPermission = async () => {
-    let permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
-    if (permission.status !== 'granted') {
-      permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
-      if(permission.status !== 'granted') {
-        Alert.alert('Permission not granted to show notification');
-      };
+    const { status } = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
+    if (status !== 'granted') {
+      Alert.alert('Permission not granted to show notification');
     }
-    return permission;
+    return status;
   };
 
   Notifications.setNotificationHandler({
@@ -80,17 +53,43 @@ const Reservation = ({ navigation }) => {
 
 
   const triggerNotification = async (date) => {
-    await obtainNotificationPermission().then(data => console.log(data));
+    await obtainNotificationPermission();
     Notifications.scheduleNotificationAsync({
       content: {
         title: 'Your Reservation',
-        body: 
-          'Your reservation for date ' + 
+        body:
+          'Your reservation for date ' +
           moment(date).format('Do MMMM YYYY, h:mm') +
           ' is requested'
       },
       trigger: null
     });
+  };
+
+  const obtainCalendarPermission = async () => {
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission not granted for using calendar')
+    }
+    return status;
+  };
+
+  const addReservationToCalendar = async (date) => {
+
+    await obtainCalendarPermission();
+    Calendar.createEventAsync(Calendar.DEFAULT, {
+      title: 'Con Fusion Table Reservation',
+      startDate: moment(date, "YYYY-MM-DD'T'HH:mm:ss.sssZ").toDate(),
+      endDate: moment(date, "YYYY-MM-DD'T'HH:mm:ss.sssZ").add(2, 'hours').toDate(),
+      timeZone: 'Asia/Hong_Kong',
+      location: '121, Clear Water Bay Road, Kowloon, Hong Kong'
+    });
+  };
+
+  const handleReservation = () => {
+    triggerNotification();
+    addReservationToCalendar(reservation.date);
+    resetForm();
   };
 
   return (
@@ -99,67 +98,67 @@ const Reservation = ({ navigation }) => {
         animation="zoomIn"
         duration={300}
       >
-      <View style={styles.formRow}>
-        <Text style={styles.formLabel}>
-          Number of Guests
+        <View style={styles.formRow}>
+          <Text style={styles.formLabel}>
+            Number of Guests
         </Text>
-        <Picker
-          style={styles.formItem}
-          selectedValue={reservation.guests}
-          onValueChange={itemValue => setReservation({...reservation, guests: itemValue})}
-        >
-          <Picker.Item label='1' value='1' />
-          <Picker.Item label='2' value='2' />
-          <Picker.Item label='3' value='3' />
-          <Picker.Item label='4' value='4' />
-          <Picker.Item label='5' value='5' />
-          <Picker.Item label='6' value='6' />
-        </Picker>
-      </View>
-      <View style={styles.formRow}>
-        <Text style={styles.formLabel}>
-          Classic menu / Tasting menu
+          <Picker
+            style={styles.formItem}
+            selectedValue={reservation.guests}
+            onValueChange={itemValue => setReservation({ ...reservation, guests: itemValue })}
+          >
+            <Picker.Item label='1' value='1' />
+            <Picker.Item label='2' value='2' />
+            <Picker.Item label='3' value='3' />
+            <Picker.Item label='4' value='4' />
+            <Picker.Item label='5' value='5' />
+            <Picker.Item label='6' value='6' />
+          </Picker>
+        </View>
+        <View style={styles.formRow}>
+          <Text style={styles.formLabel}>
+            Classic menu / Tasting menu
         </Text>
-        <Switch 
-          style={styles.formItem}
-          value={reservation.menu}
-          onTrackColor='#512DA8'
-          onValueChange={value => setReservation({...reservation, menu: value})}
-        />
-      </View>
-      <View style={styles.formRow}>
-        <View style={styles.formPickerLabel}>
-          <Button title="Select date" onPress={toggleDate}/>
-        </View>
-          <Text style={styles.formDateItem}>
-            {
-              reservation.date 
-              ? moment(reservation.date).format('Do MMMM YYYY, h:mm')
-              : 'Please select date'
-            }
-          </Text>
-        <DateTimePickerModal
-          isVisible={dateTimeVisibility}
-          mode='datetime'
-          locale='en_GB'
-          date={new Date()}
-          onConfirm={handleConfirm}
-          onCancel={toggleDate}
-        />
-      </View>
-      <View style={styles.formRow}>
-        <View style={styles.formButtonItem}>
-          <Button onPress={() => navigation.goBack()} title="Cancel" />
-        </View>
-        <View style={styles.formButtonItem}>
-          <Button
-            title='Reserve'
-            color='#512DA8'
-            onPress={() => handleReservation()}
-            accessibilityLabel='Learn more about this purple button'
+          <Switch
+            style={styles.formItem}
+            value={reservation.menu}
+            onTrackColor='#512DA8'
+            onValueChange={value => setReservation({ ...reservation, menu: value })}
           />
         </View>
-      </View>
+        <View style={styles.formRow}>
+          <View style={styles.formPickerLabel}>
+            <Button title="Select date" onPress={toggleDate} />
+          </View>
+          <Text style={styles.formDateItem}>
+            {
+              reservation.date
+                ? moment(reservation.date).format('Do MMMM YYYY, h:mm')
+                : 'Please select date'
+            }
+          </Text>
+          <DateTimePickerModal
+            isVisible={dateTimeVisibility}
+            mode='datetime'
+            locale='en_GB'
+            date={new Date()}
+            onConfirm={handleConfirm}
+            onCancel={toggleDate}
+          />
+        </View>
+        <View style={styles.formRow}>
+          <View style={styles.formButtonItem}>
+            <Button onPress={() => navigation.goBack()} title="Cancel" />
+          </View>
+          <View style={styles.formButtonItem}>
+            <Button
+              title='Reserve'
+              color='#512DA8'
+              onPress={() => handleReservation()}
+              accessibilityLabel='Learn more about this purple button'
+            />
+          </View>
+        </View>
       </Animatable.View>
     </ScrollView>
   );
@@ -188,7 +187,7 @@ const styles = StyleSheet.create({
     marginLeft: 40
   },
   formButtonItem: {
-    flex: 1, 
+    flex: 1,
     margin: 10
   },
   datePicker: {

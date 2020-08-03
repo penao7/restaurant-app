@@ -4,10 +4,9 @@ import { ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
-import { toggleFavourite } from '../redux/ActionCreators';
+import { deleteFavourite } from '../redux/ActionCreators';
 import Swipeout from 'react-native-swipeout';
 import * as Animatable from 'react-native-animatable';
-
 
 const mapStateToProps = state => {
   return ({
@@ -17,33 +16,32 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  toggleFavourite: dishId => dispatch(toggleFavourite(dishId))
+  deleteFavourite: dishId => dispatch(deleteFavourite(dishId))
 });
 
-const Favourites = ({dishes, favourites, navigation, toggleFavourite}) => {
+const Favourites = ({ dishes, favourites, navigation, deleteFavourite }) => {
 
   const { navigate } = navigation;
-      
-  const renderMenuItem = ({item, index}) => {
+
+  const renderMenuItem = ({ item, index }) => {
 
     const rightButton = [
       {
         text: 'Delete',
         type: 'delete',
-        onPress: () => 
-        { 
+        onPress: () => {
           Alert.alert(
             'Delete favourite',
             'Are you sure you wish to delete the favourite dish ' + item.name + '?',
             [
-              { 
-                text: 'Cancel', 
+              {
+                text: 'Cancel',
                 onPress: () => console.log(item.name + ' Not Deleted'),
                 style: 'cancel'
               },
               {
-                text: 'Delete', 
-                onPress: () => toggleFavourite(item.id),
+                text: 'Delete',
+                onPress: () => deleteFavourite(item._id),
                 style: 'delete'
               }
             ],
@@ -62,36 +60,38 @@ const Favourites = ({dishes, favourites, navigation, toggleFavourite}) => {
           animation="fadeInRightBig"
           duration={1000}
           delay={0}
-        >       
+        >
           <ListItem
             key={index}
             title={item.name}
             subtitle={item.description}
             hideChevron={true}
-            onPress={() => navigate('Dishdetail', {dishId: item.id})}
-            leftAvatar={{ source: {uri: baseUrl + item.image}}}
+            onPress={() => navigate('Dishdetail', { dishId: item._id })}
+            leftAvatar={{ source: { uri: baseUrl + item.image } }}
           />
         </Animatable.View>
       </Swipeout>
-      );
+    );
   };
 
   return (
     dishes.isLoading
-    ? <Loading/>
-    : dishes.errMess
-    ? 
-      <View>
-        <Text>
-          {dishes.errMess}
-        </Text>  
-      </View>
-    : 
-      <FlatList
-        data={dishes.dishes.filter(dish => favourites.some(el => el === dish.id))}
-        renderItem={renderMenuItem}
-        keyExtractor={item => item.id.toString()}
-      />
+      ? <Loading />
+      : dishes.errMess
+        ?
+        <View>
+          <Text>
+            {dishes.errMess}
+          </Text>
+        </View>
+        : favourites.favourites
+        ?
+        <FlatList
+          data={dishes.dishes.filter(dish => favourites.favourites.dishes.some(el => el === dish._id))}
+          renderItem={renderMenuItem}
+          keyExtractor={item => item._id}
+        />
+        : <Loading/>
   );
 };
 

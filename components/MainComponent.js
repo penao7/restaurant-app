@@ -1,347 +1,69 @@
 import React, { useEffect } from 'react';
-import Login from './LoginComponent';
-import Home from './HomeComponent';
-import Menu from './MenuComponent';
-import About from './AboutComponent';
 import Dishdetail from './DishdetailComponent';
-import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
-import Favourites from './FavouriteComponent';
-import { 
-  Text, 
-  View, 
-  Image, 
-  StyleSheet, 
-  SafeAreaView, 
+import { LoginNavigator } from './NavigatorComponents'
+import { FavouritesNavigator } from './NavigatorComponents'
+import { HomeNavigator } from './NavigatorComponents'
+import { ContactNavigator } from './NavigatorComponents'
+import { AboutUsNavigator } from './NavigatorComponents'
+import { MenuNavigator } from './NavigatorComponents'
+import { ReservationNavigator } from './NavigatorComponents'
+import {
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  SafeAreaView,
   TouchableOpacity,
-  ToastAndroid } from 'react-native';
+  ToastAndroid,
+  Alert } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { 
+  createDrawerNavigator, 
+  DrawerContentScrollView, 
+  DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import { 
+  fetchDishes, 
+  fetchComments, 
+  fetchPromos, 
+  fetchLeaders, 
+  logoutUser, 
+  fetchFavourites, 
+  authValidation } from '../redux/ActionCreators';
 import { Icon } from 'react-native-elements';
-import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
 import { connect } from 'react-redux';
+import { Loading } from './LoadingComponent';
 
-
-const Stack = createStackNavigator();
 const RootStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const mapDispatchToProps = dispatch => ({
+  authValidation: () => dispatch(authValidation()),
   fetchDishes: () => dispatch(fetchDishes()),
   fetchComments: () => dispatch(fetchComments()),
   fetchPromos: () => dispatch(fetchPromos()),
-  fetchLeaders: () => dispatch(fetchLeaders())
+  fetchLeaders: () => dispatch(fetchLeaders()),
+  fetchFavourites: () => dispatch(fetchFavourites()),
+  logoutUser: () => dispatch(logoutUser())
 });
 
-const LoginNavigator = () => {
-  return (
-    <View style={{ flex: 1 }}>
-        <Stack.Navigator
-          screenOptions={({navigation}) => ({
-            headerStyle: {
-              backgroundColor: "#512DA8",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              color: "#fff",
-              textAlign: 'center'
-            },
-            headerLeft: () => (
-              <TouchableOpacity style={{margin: 10}}>
-                <Icon
-                  name="menu" 
-                  size={30} 
-                  color="white"
-                  onPress={() => navigation.toggleDrawer()}
-                />
-              </TouchableOpacity>
-            ),
-            headerRight: () => (
-              <TouchableOpacity style={{margin: 20}}>
-                <Icon
-                  name="cutlery"
-                  type="font-awesome"
-                  size={24} 
-                  color="white"
-                  onPress={() => navigation.navigate('Reserve a table')}
-                />
-              </TouchableOpacity>
-            )
-            }
-          )
-        }
-      >
-      <Stack.Screen name="Login" component={Login}/>
-    </Stack.Navigator>
-  </View>
-  )
+const mapStateToProps = state => {
+  return {
+    auth: state.auth
+  };
 };
 
-const HomeNavigator = () => {
-
-  return (
-  <View style={{ flex: 1 }}>
-      <Stack.Navigator
-      screenOptions={({navigation}) => ({
-          headerStyle: {
-            backgroundColor: "#512DA8",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            color: "#fff",
-            textAlign: 'center'
-          },
-          headerLeft: () => (
-            <TouchableOpacity style={{margin: 10}}>
-              <Icon
-                name="menu" 
-                size={30} 
-                color="white"
-                onPress={() => navigation.toggleDrawer()}
-              />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity style={{margin: 20}}>
-              <Icon
-                name="cutlery"
-                type="font-awesome"
-                size={24} 
-                color="white"
-                onPress={() => navigation.navigate('Reserve a table')}
-              />
-            </TouchableOpacity>
-          )
-          }
-        )
-      }
-    >
-      <Stack.Screen
-        name="Home" 
-        component={Home} 
-    />
-    </Stack.Navigator>
-  </View>
-  )
-};
-
-const MenuNavigator = () => {
-  return (
-    <View style={{ flex: 1 }}>
-      <Stack.Navigator
-        initialRouteName="Menu"
-        screenOptions={({navigation}) => ({
-          headerStyle: {
-            backgroundColor: "#512DA8",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            color: "#fff",
-            textAlign: 'center'
-          },
-          headerRight: () => (
-            <TouchableOpacity style={{margin: 20}}>
-              <Icon
-                name="cutlery"
-                type="font-awesome"
-                size={24} 
-                color="white"
-                onPress={() => navigation.navigate('Reserve a table')}
-              />
-            </TouchableOpacity>
-          )
-        })}
-      >
-        <Stack.Screen 
-          name="Menu" 
-          component={Menu}
-          options={({navigation}) => ({
-            headerLeft: () => (
-              <TouchableOpacity style={{margin: 10}}>
-                <Icon
-                  name="menu" 
-                  size={30} 
-                  color="white"
-                  onPress={() => navigation.toggleDrawer()}
-                />
-              </TouchableOpacity>
-          )})}
-        />
-      </Stack.Navigator>
-    </View>
-  )
-};
-
-const ContactNavigator = () => {
-  return (
-    <View style={{ flex: 1 }}>
-        <Stack.Navigator
-        screenOptions={({navigation}) => ({
-            headerStyle: {
-              backgroundColor: "#512DA8",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              color: "#fff",
-              textAlign: 'center'
-            },
-            headerLeft: () => (
-              <TouchableOpacity style={{margin: 10}}>
-                <Icon
-                  name="menu" 
-                  size={30} 
-                  color="white"
-                  onPress={() => navigation.toggleDrawer()}
-                />
-              </TouchableOpacity>
-            ),
-            headerRight: () => (
-              <TouchableOpacity style={{margin: 20}}>
-                <Icon
-                  name="cutlery"
-                  type="font-awesome"
-                  size={24} 
-                  color="white"
-                  onPress={() => navigation.navigate('Reserve a table')}
-                />
-              </TouchableOpacity>
-            )
-            }
-          )
-        }
-      >
-      <Stack.Screen name="Contact" component={Contact}/>
-    </Stack.Navigator>
-  </View>
-  )
-};
-
-const AboutUsNavigator = () => {
-  return (
-    <View style={{ flex: 1 }}>
-        <Stack.Navigator
-        screenOptions={({navigation}) => ({
-            headerStyle: {
-              backgroundColor: "#512DA8",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              color: "#fff",
-              textAlign: 'center'
-            },
-            headerLeft: () => (
-              <TouchableOpacity style={{margin: 10}}>
-                <Icon
-                  name="menu" 
-                  size={30} 
-                  color="white"
-                  onPress={() => navigation.toggleDrawer()}
-                />
-              </TouchableOpacity>
-            ),
-            headerRight: () => (
-              <TouchableOpacity style={{margin: 20}}>
-                <Icon
-                  name="cutlery"
-                  type="font-awesome"
-                  size={24} 
-                  color="white"
-                  onPress={() => navigation.navigate('Reserve a table')}
-                />
-              </TouchableOpacity>
-            )
-            }
-          )
-        }
-      >
-      <Stack.Screen name="About Us" component={About}/>
-    </Stack.Navigator>
-  </View>
-  )
-};
-
-const ReservationNavigator = () => {
-  return (
-    <View style={{ flex: 1 }}>
-      <Stack.Navigator
-        screenOptions={() => ({
-          headerStyle: {
-            backgroundColor: "#512DA8",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            color: "#fff",
-          }
-        })
-        }
-        >
-        <Stack.Screen 
-          name="Reserve a table" 
-          component={Reservation}
-          options={({navigation}) => ({
-            headerLeft: () => (
-              <TouchableOpacity style={{margin: 10}}>
-                <Icon
-                  name="menu" 
-                  size={30} 
-                  color="white"
-                  onPress={() => navigation.toggleDrawer()}
-                />
-              </TouchableOpacity>
-          )})}
-        />
-        </Stack.Navigator>
-      </View>
-  );
-};
-
-
-const FavouritesNavigator = () => {
-  return (
-    <View style={{ flex: 1 }}>
-        <Stack.Navigator
-          screenOptions={({navigation}) => ({
-            headerStyle: {
-              backgroundColor: "#512DA8",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              color: "#fff",
-              textAlign: 'center'
-            },
-            headerLeft: () => (
-              <TouchableOpacity style={{margin: 10}}>
-                <Icon
-                  name="menu" 
-                  size={30} 
-                  color="white"
-                  onPress={() => navigation.toggleDrawer()}
-                />
-              </TouchableOpacity>
-            ),
-            headerRight: () => (
-              <TouchableOpacity style={{margin: 20}}>
-                <Icon
-                  name="cutlery"
-                  type="font-awesome"
-                  size={24} 
-                  color="white"
-                  onPress={() => navigation.navigate('Reserve a table')}
-                />
-              </TouchableOpacity>
-            )
-            }
-          )
-        }
-      >
-      <Stack.Screen name="Favourites" component={Favourites}/>
-    </Stack.Navigator>
-  </View>
-  )
-};
-
-const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
+const Main = ({ 
+  fetchDishes, 
+  fetchFavourites, 
+  fetchComments, 
+  fetchPromos, 
+  fetchLeaders, 
+  auth, 
+  logoutUser, 
+  authValidation 
+}) => {
 
   const handleConnectivityChange = (state) => {
     switch (state.type) {
@@ -365,62 +87,111 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
   const unsubscribe = () => NetInfo.addEventListener(handleConnectivityChange);
 
   useEffect(() => {
+    authValidation();
     fetchDishes();
     fetchLeaders();
     fetchComments();
     fetchPromos();
+    fetchFavourites();
 
     NetInfo.addEventListener(handleConnectivityChange);
 
     return (
-      unsubscribe = () => NetInfo.addEventListener(handleConnectivityChange)
+      unsubscribe()
     );
 
   }, []);
 
+  const LoggedIn = (props) => {
+    return ( 
+      auth.isAuthenticated
+      ?
+      <View>
+        <DrawerItem
+          label="Logout"
+          onPress={() => {
+            Alert.alert(
+              'Log out',
+              'Do you want to logout?',
+              [
+                { text: 'Cancel', onPress: () => { return null } },
+                {
+                  text: 'Confirm', onPress: () => {
+                    logoutUser();
+                    props.navigation.navigate('Login')
+                  }
+                },
+              ],
+              { cancelable: false }
+            )
+          }}
+          icon={({ tintColor }) => (
+            <Icon
+              name="sign-out"
+              type="font-awesome"
+              color={tintColor}
+            />
+          )}
+        />
+        <DrawerItem
+          label="Favourites"
+          onPress={() => { props.navigation.navigate('Favourites') }}
+          icon={({ tintColor }) => (
+            <Icon
+              name="heart"
+              type="font-awesome"
+              color={tintColor}
+              size={23}
+            />
+          )}
+        />
+      </View>
+      :
+      <DrawerItem
+        label="Login"
+        onPress={() => props.navigation.navigate('Login')}
+        icon={({ tintColor }) => (
+          <Icon
+            name="sign-in"
+            type="font-awesome"
+            size={24}
+            color={tintColor}
+          />
+        )}
+      />
+    );
+  };
+ 
   const CustomDrawerContentComponent = (props) => (
     <DrawerContentScrollView>
       <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
         <View style={styles.drawerHeader}>
-          <View style={{flex:1}}>
-          <Image source={require('./images/logo.png')} style={styles.drawerImage} />
+          <View style={{ flex: 1 }}>
+            <Image source={require('./images/logo.png')} style={styles.drawerImage} />
           </View>
-          <View style={{flex: 2}}>
+          <View style={{ flex: 2 }}>
             <Text style={styles.drawerHeaderText}>Ristorante Con Fusion</Text>
           </View>
         </View>
-        <DrawerItemList {...props}/>
+        <LoggedIn {...props} />
+        <DrawerItemList {...props} />
       </SafeAreaView>
-    </DrawerContentScrollView>
+    </DrawerContentScrollView >
   );
 
   const MainNavigator = () => {
+
     return (
       <Drawer.Navigator
         initialRouteName="Home"
         drawerContent={CustomDrawerContentComponent}
       >
-        <Drawer.Screen 
-          name="Login" 
-          component={LoginNavigator}
-          options={{
-            drawerLabel: "Login",
-            drawerIcon: ({tintColor}) => (
-              <Icon
-                name="sign-in"
-                type="font-awesome"
-                size={26}
-                color={tintColor}
-              />
-            )
-          }}
-        />
-        <Drawer.Screen 
-          name="Home" 
+        <Drawer.Screen
+          name="Home"
           component={HomeNavigator}
           options={{
             drawerLabel: "Home",
-            drawerIcon: ({tintColor}) => (
+            drawerIcon: ({ tintColor }) => (
               <Icon
                 name="home"
                 type="font-awesome"
@@ -430,12 +201,12 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
             )
           }}
         />
-        <Drawer.Screen 
-          name="Menu" 
+        <Drawer.Screen
+          name="Menu"
           component={MenuNavigator}
           options={{
             drawerLabel: "Menu",
-            drawerIcon: ({tintColor}) => (
+            drawerIcon: ({ tintColor }) => (
               <Icon
                 name="list"
                 type="font-awesome"
@@ -445,12 +216,12 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
             )
           }}
         />
-        <Drawer.Screen 
-          name="Contact" 
+        <Drawer.Screen
+          name="Contact"
           component={ContactNavigator}
           options={{
             drawerLabel: "Contact",
-            drawerIcon: ({tintColor}) => (
+            drawerIcon: ({ tintColor }) => (
               <Icon
                 name="address-card"
                 type="font-awesome"
@@ -460,12 +231,12 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
             )
           }}
         />
-        <Drawer.Screen 
-          name="About Us" 
+        <Drawer.Screen
+          name="About Us"
           component={AboutUsNavigator}
           options={{
             drawerLabel: "About Us",
-            drawerIcon: ({tintColor}) => (
+            drawerIcon: ({ tintColor }) => (
               <Icon
                 name="info-circle"
                 type="font-awesome"
@@ -475,29 +246,13 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
             )
           }}
         />
-        <Drawer.Screen 
-          name="Favourites" 
-          initialRouteName="Favourites"
-          component={FavouritesNavigator}
-          options={() => ({
-            drawerLabel: "Favourites",
-            drawerIcon: ({tintColor}) => (
-              <Icon
-                name="heart"
-                type="font-awesome"
-                size={23}
-                color={tintColor}
-              />
-            )
-          })}
-        />
-        <Drawer.Screen 
-          name="Reserve Table" 
+        <Drawer.Screen
+          name="Reserve Table"
           initialRouteName="Menu"
           component={ReservationNavigator}
           options={() => ({
             drawerLabel: "Reserve a table",
-            drawerIcon: ({tintColor}) => (
+            drawerIcon: ({ tintColor }) => (
               <Icon
                 name="cutlery"
                 type="font-awesome"
@@ -513,50 +268,55 @@ const Main = ({fetchDishes, fetchComments, fetchPromos, fetchLeaders}) => {
 
   const RootStackNavigator = () => {
     return (
-    <RootStack.Navigator
+      <RootStack.Navigator
         screenOptions={() => ({
           headerStyle: {
             backgroundColor: "#512DA8"
           },
           headerTintColor: "#fff",
-          headerTitleStyle: {
-            color: "#fff",
-            textAlign: "center",
-            flex: 1
-        }})}
+          headerTitleAlign: 'center'
+        })}
         model='modal'>
         <RootStack.Screen
           name='Main'
           component={MainNavigator}
-          options={{ headerShown: false}}
+          options={{ headerShown: false }}
         />
-      <RootStack.Screen 
-          name="Reserve a table" 
+        <RootStack.Screen
+          name="Reserve a table"
           component={Reservation}
-      />
-      <RootStack.Screen 
-        name="Dishdetail" 
-        component={Dishdetail}
-        options={({navigation}) => ({
-          headerRight: () => (
-            <TouchableOpacity style={{margin: 20}}>
-              <Icon
-                name="cutlery"
-                type="font-awesome"
-                size={24} 
-                color="white"
-                onPress={() => navigation.navigate('Reserve a table')}
-              />
-            </TouchableOpacity>
-          )
-        })}
         />
-    </RootStack.Navigator>
+        <RootStack.Screen
+          name="Login"
+          component={LoginNavigator}
+        />
+        <RootStack.Screen
+          name="Favourites"
+          component={FavouritesNavigator}
+        />
+        <RootStack.Screen
+          name="Dishdetail"
+          component={Dishdetail}
+          options={({ navigation }) => ({
+            headerRight: () => (
+              <TouchableOpacity style={{ margin: 20 }}>
+                <Icon
+                  name="cutlery"
+                  type="font-awesome"
+                  size={24}
+                  color="white"
+                  onPress={() => navigation.navigate('Reserve a table')}
+                />
+              </TouchableOpacity>
+            )
+          })}
+        />
+      </RootStack.Navigator>
     );
   };
 
   return (
-    <RootStackNavigator/>
+    <RootStackNavigator />
   );
 };
 
@@ -584,4 +344,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect('', mapDispatchToProps)(Main);
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

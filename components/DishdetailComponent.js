@@ -1,46 +1,50 @@
 import React, { useState, useRef } from 'react';
-import { 
-  Text, 
-  View, 
-  ScrollView, 
-  FlatList, 
-  Modal, 
-  StyleSheet, 
+import {
+  Text,
+  View,
+  ScrollView,
+  FlatList,
+  Modal,
+  StyleSheet,
   Button,
   Alert,
   PanResponder,
-  Share } from 'react-native';
+  Share
+} from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
-import { toggleFavourite, postComment } from '../redux/ActionCreators';
+import { toggleFavourite, postComment, postFavourite, deleteFavourite } from '../redux/ActionCreators';
 import moment from 'moment';
 import * as Animatable from 'react-native-animatable';
+import { Loading } from './LoadingComponent';
 
 const mapStateToProps = state => {
   return {
     dishes: state.dishes,
     comments: state.comments,
-    favourites: state.favourites
+    favourites: state.favourites,
+    auth: state.auth
   };
 };
 
 const mapDispatchToProps = dispatch => ({
-  toggleFavourite: (dishId) => dispatch(toggleFavourite(dishId)),
+  postFavourite: (dishId) => dispatch(postFavourite(dishId)),
+  deleteFavourite: (dishId) => dispatch(deleteFavourite(dishId)),
   postComment: (comment) => dispatch(postComment(comment))
 });
-  
-const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
+
+const RenderDish = ({ dish, favourite, postFavourite, deleteFavourite, toggleModal }) => {
 
   const handleViewRef = useRef('');
 
-  const recognizeDrag = ({dx}) => {
+  const recognizeDrag = ({ dx }) => {
     return (
-      dx < -200 ? true  : false
+      dx < -200 ? true : false
     );
   };
 
-  const recognizeComment = ({dx}) => {
+  const recognizeComment = ({ dx }) => {
     return (
       dx > 200 ? true : false
     );
@@ -64,7 +68,6 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
       handleViewRef.current.shake(800);
     },
     onPanResponderEnd: (e, gestureState) => {
-      console.log('pan responder end', gestureState);
       if (recognizeDrag(gestureState)) {
         Alert.alert(
           'Add to favourite',
@@ -77,7 +80,7 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
             },
             {
               text: 'Add',
-              onPress: () => onPress(),
+              onPress: () => postFavourite(dish._id),
             }
           ],
           { cancelable: false }
@@ -86,79 +89,79 @@ const RenderDish = ({dish, favourite, onPress, toggleModal}) => {
         toggleModal()
       };
       return true;
-     }
+    }
   })).current;
 
   return (
-    dish 
-    ?
-    <View>
-      <Animatable.View
-        ref={handleViewRef}
-        animation="fadeInDown"
-        duration={1000}
-        delay={500}
-        {...panResponder.panHandlers}
-      >      
-        <Card
-          featuredTitle={dish.name}
-          image={{uri: baseUrl + dish.image}}
+    dish
+      ?
+      <View>
+        <Animatable.View
+          ref={handleViewRef}
+          animation="fadeInDown"
+          duration={1000}
+          delay={500}
+          {...panResponder.panHandlers}
         >
-          <Text style={{margin: 10}}>
-            {dish.description}
-          </Text>
-          <View style={{justifyContent: 'center', flexDirection: 'row'}}>
-            <Icon
-              raised
-              reverse
-              name={favourite ? "heart" : "heart-o"}
-              type="font-awesome"
-              color="#f50"
-              onPress={() => onPress()}
-            />
-            <Icon
-              raised
-              reverse
-              name="pencil"
-              type="font-awesome"
-              color="blue"
-              onPress={() => toggleModal()}
-            />
-            <Icon
-              raised
-              reverse
-              name="share"
-              type="font-awesome"
-              color="#51D2A8"
-              onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)}
-            />
-          </View>
-        </Card>
-      </Animatable.View>
-    </View>
-    : <Text></Text>
+          <Card
+            featuredTitle={dish.name}
+            image={{ uri: baseUrl + dish.image }}
+          >
+            <Text style={{ margin: 10 }}>
+              {dish.description}
+            </Text>
+            <View style={{ justifyContent: 'center', flexDirection: 'row' }}>
+              <Icon
+                raised
+                reverse
+                name={favourite ? "heart" : "heart-o"}
+                type="font-awesome"
+                color="#f50"
+                onPress={() => favourite ? deleteFavourite(dish._id) : postFavourite(dish._id)}
+              />
+              <Icon
+                raised
+                reverse
+                name="pencil"
+                type="font-awesome"
+                color="blue"
+                onPress={() => toggleModal()}
+              />
+              <Icon
+                raised
+                reverse
+                name="share"
+                type="font-awesome"
+                color="#51D2A8"
+                onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)}
+              />
+            </View>
+          </Card>
+        </Animatable.View>
+      </View>
+      : <Text></Text>
   );
 };
 
-const RenderComments = ({comments}) => {
+const RenderComments = ({ comments }) => {
 
   const renderCommentItem = ({ item }) => {
     return (
-      <View key={item.id} style={{margin: 10}}>
-        <Text style={{fontSize: 14}}>
+      <View key={item._id} style={{ margin: 10 }}>
+        <Text style={{ fontSize: 14 }}>
           {item.comment}
         </Text>
-        <View style={{flexDirection: "row"}}>
+        <View style={{ flexDirection: "row" }}>
           <Rating
             fractions={0}
-            style={{margin: 5}}
+            style={{ margin: 5 }}
             readonly
             startingValue={item.rating}
             imageSize={30}
           />
         </View>
-        <Text style={{fontSize: 12}}>
-          {"-- " + item.author + ', ' + moment(item.date).format('MMMM Do YYYY')}
+        <Text style={{ fontSize: 12 }}>
+          {"-- " + item.author.author + ', ' + moment(item.updatedAt.toDate()).format('MMMM Do YYYY')}
         </Text>
       </View>
     );
@@ -169,12 +172,12 @@ const RenderComments = ({comments}) => {
       animation="fadeInUp"
       duration={1000}
       delay={500}
-    >      
+    >
       <Card title="Comments">
         <FlatList
           data={comments}
           renderItem={renderCommentItem}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={item => item._id}
         />
       </Card>
     </Animatable.View>
@@ -182,7 +185,7 @@ const RenderComments = ({comments}) => {
 
 };
 
-const Dishdetail = ({dishes, favourites, comments, route, toggleFavourite, postComment}) => {
+const Dishdetail = ({ dishes, favourites, comments, route, postFavourite, deleteFavourite, postComment, auth }) => {
 
   const dishId = route.params.dishId
 
@@ -190,7 +193,6 @@ const Dishdetail = ({dishes, favourites, comments, route, toggleFavourite, postC
   const [comment, setComment] = useState({
     dishId: dishId,
     comment: "",
-    author: "",
   });
 
   const [rating, setRating] = useState(3);
@@ -200,12 +202,9 @@ const Dishdetail = ({dishes, favourites, comments, route, toggleFavourite, postC
   };
 
   const submitComment = () => {
-    console.log(comment);
     const newComment = ({
       dishId: comment.dishId,
       comment: comment.comment,
-      author: comment.author,
-      date: new Date().toISOString(),
       rating: rating
     })
     postComment(newComment);
@@ -215,9 +214,7 @@ const Dishdetail = ({dishes, favourites, comments, route, toggleFavourite, postC
   const resetForm = () => {
     setComment({
       dishId: dishId,
-      author: '',
       comment: '',
-      date: new Date().toISOString()
     });
     toggleModal();
   }
@@ -228,14 +225,29 @@ const Dishdetail = ({dishes, favourites, comments, route, toggleFavourite, postC
 
   return (
     <ScrollView>
-      <RenderDish 
-        dish={dishes.dishes[+dishId]}
-        favourite={favourites.some(el => el === dishId)}
-        onPress={() => markFavourite(dishId)}
-        postComment={postComment}
-        toggleModal={toggleModal}
-      />
-      <RenderComments comments={comments.comments.filter(comment => comment.dishId === dishId)}/>
+      {auth.isAuthenticated && favourites.favourites
+        ?
+        <RenderDish
+          dish={dishes.dishes.filter(dish => dish._id === dishId)[0]}
+          favourite={favourites.isLoading ? false : favourites.favourites.dishes.some(el => el === dishId)}
+          onPress={() => markFavourite(dishId)}
+          postComment={postComment}
+          toggleModal={toggleModal}
+          postFavourite={postFavourite}
+          deleteFavourite={deleteFavourite}
+        />
+        :
+        <RenderDish
+          dish={dishes.dishes.filter(dish => dish._id === dishId)[0]}
+          favourite={false}
+          onPress={() => markFavourite(dishId)}
+          postComment={postComment}
+          toggleModal={toggleModal}
+          postFavourite={postFavourite}
+          deleteFavourite={deleteFavourite}
+        />
+      }
+      <RenderComments comments={comments.comments.filter(comment => comment.dishId === dishId)} />
       <Modal
         animationType={'slide'}
         transparent={false}
@@ -255,22 +267,9 @@ const Dishdetail = ({dishes, favourites, comments, route, toggleFavourite, postC
           </View>
           <View style={styles.modalText}>
             <Input
-              placeholder="Author"
-              name="author"
-              onChangeText={text => setComment({...comment, author: text})}
-              leftIcon={
-                <Icon
-                  name="user-o"
-                  type="font-awesome"
-                  size={24}
-                  color="black"
-                />
-              }
-            />
-            <Input
               placeholder="Comment"
               name="message"
-              onChangeText={text => setComment({...comment, comment: text})}
+              onChangeText={text => setComment({ ...comment, comment: text })}
               leftIcon={
                 <Icon
                   name="comment-o"
@@ -281,12 +280,12 @@ const Dishdetail = ({dishes, favourites, comments, route, toggleFavourite, postC
               }
             />
           </View>
-          <View style={{margin: 10}}>
-            <Button color='#512DA8' style={{margin: 20}} title="Submit" onPress={submitComment}/>
+          <View style={{ margin: 10 }}>
+            <Button color='#512DA8' style={{ margin: 20 }} title="Submit" onPress={submitComment} />
           </View>
-          <View style={{margin: 10}}>
-            <Button color="gray" title="Cancel" onPress={resetForm}/>
-          </View>   
+          <View style={{ margin: 10 }}>
+            <Button color="gray" title="Cancel" onPress={resetForm} />
+          </View>
         </View>
       </Modal>
     </ScrollView>

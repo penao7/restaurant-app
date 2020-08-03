@@ -12,45 +12,50 @@ const mapStateToProps = state => {
   }
 };
 
-const Menu = ({navigation, dishes}) => {
+const Menu = ({ navigation, dishes }) => {
 
   const { navigate } = navigation;
 
-  const renderMenuItem = ({item}) => {
+  const renderMenuItem = ({ item }) => {
+    
     return (
       <Animatable.View
-      animation="fadeInRightBig"
-      duration={1000}
-      delay={0}
-    >      
+        animation="fadeInRightBig"
+        duration={1000}
+        delay={0}
+      >
         <Tile
-          key={item.name}
+          key={item._id}
           title={item.name}
           caption={item.description}
           featured
           imageSrc={{ uri: baseUrl + item.image }}
-          onPress={() => navigate('Dishdetail', { dishId: item.id })}
+          onPress={() => navigate('Dishdetail', { dishId: item._id })}
         />
       </Animatable.View>
     )
   };
 
   return (
+
+    dishes.dishes 
+    ?
     dishes.isLoading
-    ? <Loading/>
-    : dishes.errMess
-    ? 
-      <View>
-        <Text>
-          {dishes.errMess}
-        </Text>
-      </View>
-    :
-      <FlatList
-        data={dishes.dishes}
-        renderItem={renderMenuItem}
-        keyExtractor={item => item.id.toString()}
-      />
+      ? <Loading />
+      : dishes.errMess
+        ?
+        <View>
+          <Text>
+            {dishes.errMess}
+          </Text>
+        </View>
+        :
+        <FlatList
+          data={dishes.dishes}
+          renderItem={renderMenuItem}
+          keyExtractor={item => item._id}
+        />
+      : <Loading/>
   )
 };
 
