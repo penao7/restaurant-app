@@ -10,7 +10,7 @@ A [Coursera](https://www.coursera.org/) project to create a restaurant app which
 - Rate dishes
 - Comment dishes
 - Add dishes to favourites
-- Restourant information
+- Restaurant information
 
 ## Requirements
 
